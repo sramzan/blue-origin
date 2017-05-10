@@ -1,7 +1,7 @@
 # blue-origin
 
 To Launch Local Instance:
-  `npm start`
+  - `npm start`
   - Launches lost instance @ http://localhost:3000
 
 TODO:
