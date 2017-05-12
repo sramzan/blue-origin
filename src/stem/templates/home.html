@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"> -->
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="home.css">
+  <title>Sean's Way to Stem</title>
+</head>
+
+<body>
+  <div ng-app="">
+    <div id="headerText" class="centerDiv">
+      <h1 class="alignTextCenter">Let's get stemming!</h1>
+      <h3 class="alignTextCenter">Please enter a URL or word below</h3>
+    </div>
+
+    <!-- <p>Input something in the input box:</p>
+      <p>Name: <input type="text" ng-model="name"></p>
+      <p ng-bind="name"></p> -->
+
+    <!-- <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">URL:</span>
+        <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+      </div> -->
+
+    <div id="urlStemDiv" class=" paddingLeft">
+      <div class="row">
+        <div class="col-lg-10">
+          <div class="input-group">
+            <input id="wordListURLStem" type="text" class="form-control" placeholder="Enter URL to list of words to be stemmed">
+            <span class="input-group-btn"><button class="btn btn-default" type="button">Stem WordList!</button></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="wordStemDiv" class=" paddingLeft">
+      <div class="row">
+        <div class="col-lg-10">
+          <div class="input-group">
+            <input id="singleWordStem" type="text" class="form-control" placeholder="Enter a word to be stemmed">
+            <span class="input-group-btn"><button class="btn btn-default" type="button">Stem the Word!</button></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row centerDiv paddingLeft">
+  <div class="col-lg-10">
+    <div class="input-group">
+      <input type="text" class="form-control" aria-label="...">
+      <div class="input-group-btn">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li><a href="#">Stem WordList</a></li>
+          <li><a href="#">Stem the Word</a></li>
+        </ul>
+      </div><!-- /btn-group -->
+    </div><!-- /input-group -->
+  </div><!-- /.col-lg-6 -->
+</div><!-- /.row -->
+
+  </div>
+
+
+  <!-- Framework Scripts -->
+  <script src="dist/jquery.min.js"></script>
+  <script src="angular.min.js"></script>
+  <script src="dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

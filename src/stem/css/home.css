@@ -1,0 +1,17 @@
+.centerDiv {
+    margin: auto;
+    width: 70%;
+    /*border: 3px solid green;*/
+    padding: 10px;
+}
+
+.alignTextCenter {
+  text-align: center;
+}
+
+.paddingLeft {
+  margin: auto;
+  width: 55%;
+  padding: 15px;
+  padding-left: 130px;
+}

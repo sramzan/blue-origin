@@ -23,6 +23,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'stem/css')));
 app.use(express.static(path.join(__dirname, 'stem/js')));
 
+// Node modules that will be used in the app (i.e. AngularJS)
+app.use(express.static(path.join(__dirname, '../node_modules/angular')));
+app.use(express.static(path.join(__dirname, '../node_modules/bootstrap')));
+app.use(express.static(path.join(__dirname, '../node_modules/jquery')));
+
 app.use('/', index);
 app.use('/users', users);
 
