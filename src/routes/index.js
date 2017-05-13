@@ -22,4 +22,9 @@ router.get('/', function(req, res, next) {
   }
 });
 
+router.post('/stem', function(req, res, next) {
+  console.log('Stemming word(s) now!!');
+  res.redirect('/#/stemWordResults');
+});
+
 module.exports = router;

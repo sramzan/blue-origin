@@ -5,16 +5,59 @@
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"> -->
   <meta charset="utf-8">
   <link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="home.css">
+  <link rel="stylesheet" type="text/css" href="animate.min.css">
+  <link rel="stylesheet" type="text/css" href="stemForm.css">
   <title>Sean's Way to Stem</title>
   <base href="/">
 </head>
 
 <body ng-app="stemmer">
-  <div class="" ng-controller="test">
-    <h1>{{test}}</h1>
+  <div id="headerText" class="centerDiv">
+    <h1 class="alignTextCenter">Let's get stemming!</h1>
+    <h3 class="alignTextCenter">Please enter a URL or word below</h3>
   </div>
+
+<!-- <p>Input something in the input box:</p>
+  <p>Name: <input type="text" ng-model="name"></p>
+  <p ng-bind="name"></p> -->
+
+<!-- <div class="input-group">
+    <span class="input-group-addon" id="basic-addon1">URL:</span>
+    <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+  </div> -->
+  <div ng-controller='mainCtrl'>
+    <form>
+        <div class="row centerDiv paddingLeft">
+          <div class="col-lg-10">
+            <div class="input-group">
+              <input name="userInputForStemmer"
+                     type="text"
+                     name="inputField"
+                     class="form-control"
+                     aria-label="Input word or url that links to word list to be stemmed"
+                     ng-model="userInput"
+              >
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stem!<span class="caret"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li><button href="#">Stem WordList</button></li>
+                  <li><button ng-click="validateSingleWordInput(userInput)">Stem the Word</button></li>
+                </ul>
+              </div>
+            </div>
+            <!-- <p ng-bind="userInput"></p> -->
+            <div class="alert alert-danger animate bounce" ng-if="invalid">
+              <p>Invalid Input!</p>
+              <p>Words that can be stemmed can ONLY include:</p>
+              <p class="indent">    - Lowercase letters 'a'-'z'</p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
   <div ng-view></div>
+
   <!-- Framework Scripts -->
   <script src="angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
@@ -23,7 +66,7 @@
 
   <!-- Util Scripts -->
   <script type="text/javascript" src="main.js"></script>
-  <script type="text/javascript" src="controller/validator.js"></script>
+  <script type="text/javascript" src="controller/mainCtrl.js"></script>
 </body>
 
 </html>

@@ -1,43 +1,6 @@
 
       <div ng-controller='mainCtrl'>
-        <div id="headerText" class="centerDiv">
-          <h1 class="alignTextCenter">Let's get stemming!</h1>
-          <h3 class="alignTextCenter">Please enter a URL or word below</h3>
-        </div>
 
-      <!-- <p>Input something in the input box:</p>
-        <p>Name: <input type="text" ng-model="name"></p>
-        <p ng-bind="name"></p> -->
-
-      <!-- <div class="input-group">
-          <span class="input-group-addon" id="basic-addon1">URL:</span>
-          <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
-        </div> -->
-        <form class="" action="index.html" method="post">
-            <div class="row centerDiv paddingLeft">
-              <div class="col-lg-10">
-                <div class="input-group">
-                  <input type="text"
-                         name="inputField"
-                         class="form-control"
-                         pattern="^[a-z]+$"
-                         title="Can only contain letters a-z with no spaces"
-                         aria-label="Input word or url that links to word list to be stemmed"
-                         ng-model="userInput"
-                  >
-                  <div class="input-group-btn">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stem!<span class="caret"></span></button>
-                    <ul class="dropdown-menu dropdown-menu-right">
-                      <li><button href="#">Stem WordList</button></li>
-                      <li><button ng-click="validateSingleWordInput(userInput)">Stem the Word</button></li>
-                    </ul>
-                  </div>
-                </div>
-                <p ng-bind="userInput"></p>
-              </div>
-            </div>
-          </form>
-          <h1>{{test}}</h1>
       </div>
 
     <!-- Util Scripts -->

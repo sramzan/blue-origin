@@ -4,9 +4,9 @@
   app.config(function($routeProvider, $locationProvider) {
       $locationProvider.hashPrefix('');
       $routeProvider
-      .when("/stemWord", {
+      .when("/stemWordResults", {
           templateUrl : 'results/stemWord.html',
-          controller  : 'controller/stemWord.js'
+          // controller  : 'controller/stemWord.js'
       })
       .when("/", {
           templateUrl : "stemmer.html"
@@ -18,9 +18,4 @@
           templateUrl : "blue.htm"
       });
   });
-
-  app.controller('test', function($scope) {
-    $scope.test = 'sean';
-  });
-
 }());
