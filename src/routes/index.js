@@ -7,16 +7,18 @@ var express  = require('express'),
 /* GET home page. */
 router.get('/', function(req, res, next) {
   // res.render('index', { title: 'SR Stemmer' });
-  var baseHomePage = ROOT_DIR + '/stem/templates/home.html';
-
+  console.log("test");
+  var baseHomePage = ROOT_DIR + '/ui/templates/home.html';
   try {
-    res.sendFile(baseHomePage);
+    console.log('hey');
+    res.redirect('index.html');
+    console.log('hello');
   } catch (e) {
     console.log('ERROR: Cannot render homepage');
     console.log(e);
   } finally {
     // res.render('index', { title: 'Bummer... page not found!' });
-    res.sendFile(baseHomePage);
+    // res.sendFile(baseHomePage);
   }
 });
 

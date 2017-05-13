@@ -11,7 +11,7 @@ var users = require('./routes/users');
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'stem/templates'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
@@ -20,11 +20,15 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'stem/css')));
-app.use(express.static(path.join(__dirname, 'stem/js')));
+app.use(express.static(path.join(__dirname, 'ui/common')));
+app.use(express.static(path.join(__dirname, 'ui/css')));
+app.use(express.static(path.join(__dirname, 'ui/js')));
+app.use(express.static(path.join(__dirname, 'ui/templates')));
 
 // Node modules that will be used in the app (i.e. AngularJS)
+app.use(express.static(path.join(__dirname, '../node_modules')));
 app.use(express.static(path.join(__dirname, '../node_modules/angular')));
+app.use(express.static(path.join(__dirname, '../node_modules/angular-route')));
 app.use(express.static(path.join(__dirname, '../node_modules/bootstrap')));
 app.use(express.static(path.join(__dirname, '../node_modules/jquery')));
 

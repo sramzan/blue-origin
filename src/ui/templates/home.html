@@ -10,12 +10,7 @@
 </head>
 
 <body>
-  <h1>hey</h1>
-
-    <!-- Util Scripts -->
-    <script type="text/javascript" src="validator/inputValidator.js"></script>
-  <h2>yo</h2>
-  <div ng-app="">
+  <div ng-app="stemmer" ng-controller="mainCtrl">
     <div id="headerText" class="centerDiv">
       <h1 class="alignTextCenter">Let's get stemming!</h1>
       <h3 class="alignTextCenter">Please enter a URL or word below</h3>
@@ -37,8 +32,8 @@
           <div class="input-group-btn">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stem!<span class="caret"></span></button>
             <ul class="dropdown-menu dropdown-menu-right">
-              <li><a href="#">Stem WordList</a></li>
-              <li><a href="#" ng-click="validateSingleWordInput(userInput)">Stem the Word</a></li>
+              <li><button href="#">Stem WordList</button></li>
+              <li><button ng-click="validateSingleWordInput(userInput)">Stem the Word</button></li>
             </ul>
           </div><!-- /btn-group -->
         </div><!-- /input-group -->
@@ -46,17 +41,18 @@
       </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
 
+    <ng-view></ng-view>
+
   </div>
 
-<h1>hey</h1>
-
-  <!-- Util Scripts -->
-  <script type="text/javascript" src="validator/inputValidator.js"></script>
-<h2>yo</h2>
   <!-- Framework Scripts -->
   <script src="dist/jquery.min.js"></script>
   <script src="angular.min.js"></script>
-  <script src="dist/js/bootstrap.min.js"></script>
+  <script src="angular-route.min.js"></script>
+  <!-- <script src="dist/js/bootstrap.min.js"></script> -->
+
+  <!-- Util Scripts -->
+  <script type="text/javascript" src="main.js"></script>
 </body>
 
 </html>
