@@ -36,9 +36,10 @@
                      class="form-control"
                      aria-label="Input word or url that links to word list to be stemmed"
                      ng-model="userInput"
+                     ng-change="resetValidFlag()"
               >
               <div class="input-group-btn">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stem!<span class="caret"></span></button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stem Options<span class="caret"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right">
                   <li><button href="#">Stem WordList</button></li>
                   <li><button ng-click="validateSingleWordInput(userInput)">Stem the Word</button></li>
@@ -66,6 +67,7 @@
 
   <!-- Util Scripts -->
   <script type="text/javascript" src="main.js"></script>
+  <script type="text/javascript" src="validator/inputValidator.js"></script>
   <script type="text/javascript" src="controller/mainCtrl.js"></script>
 </body>
 

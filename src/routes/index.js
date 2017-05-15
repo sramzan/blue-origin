@@ -6,25 +6,24 @@ var express  = require('express'),
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  // res.render('index', { title: 'SR Stemmer' });
-  console.log("test");
   var baseHomePage = ROOT_DIR + '/ui/templates/home.html';
   try {
-    console.log('hey');
     res.redirect('index.html');
-    console.log('hello');
   } catch (e) {
     console.log('ERROR: Cannot render homepage');
     console.log(e);
-  } finally {
-    // res.render('index', { title: 'Bummer... page not found!' });
-    // res.sendFile(baseHomePage);
+    res.render('index', { title: 'Bummer... we seem to be experiencing some technical difficulties =/' });
   }
 });
 
-router.post('/stem', function(req, res, next) {
+router.get('/stemmer', function(req, res, next) {
   console.log('Stemming word(s) now!!');
-  res.redirect('/#/stemWordResults');
+  var type      = req.query.type,
+      userInput = req.query.userInput;
+  res.json({
+    // 'status' : 'SUCCESS'
+  })
+  // res.redirect('/#/stemWordResults');
 });
 
 module.exports = router;

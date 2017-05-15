@@ -8,9 +8,9 @@
           templateUrl : 'results/stemWord.html',
           // controller  : 'controller/stemWord.js'
       })
-      .when("/", {
-          templateUrl : "stemmer.html"
-      })
+      // .when("/", {
+      //     templateUrl : "stemmer.html"
+      // })
       .when("/green", {
           templateUrl : "green.htm"
       })

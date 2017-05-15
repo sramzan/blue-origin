@@ -3,7 +3,7 @@
 */
 
 // Common Regex Patterns
-var anyNonLetterCharsPattern = "(\d)|(\W+)|(_)", // catches digits, non alphanumeric chars, underscores
+var anyNonLetterCharsPattern = "(\\d)|(\\W+)|(_)", // catches digits, non alphanumeric chars, underscores
     urlFormatPattern="" // catches forms that do not align to 'http://url'
 
 /*
@@ -16,8 +16,8 @@ function matchesPattern(input, regexPattern){
   return pattern.test(input);
 }
 
-function validateSingleWordInput(input){
-  return !matchesPattern(input, anyNonLetterCharsPattern); // return false if it contains the illegal chars
+function containsInvalidInput(input){
+  return matchesPattern(input, anyNonLetterCharsPattern); // return false if it contains the illegal chars
 }
 
 function validatesURLInput(input){
