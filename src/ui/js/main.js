@@ -11,11 +11,5 @@
       // .when("/", {
       //     templateUrl : "stemmer.html"
       // })
-      .when("/green", {
-          templateUrl : "green.htm"
-      })
-      .when("/blue", {
-          templateUrl : "blue.htm"
-      });
   });
 }());

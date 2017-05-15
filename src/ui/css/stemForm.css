@@ -19,3 +19,9 @@
 .indent {
   padding-left: 5em;
 }
+
+/*Credit: http://stackoverflow.com/questions/36034504/how-to-disable-styling-on-pre-in-bootstrap*/
+pre {
+  border: 0;
+  background-color: transparent;}
+}

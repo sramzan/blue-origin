@@ -11,4 +11,8 @@
 */
 
 exports.stemWord = function(word){
+  if (word.length > 2){ // Only care to stem words lf length 3 or greater
+
+  }
+  return { word : {} }
 }

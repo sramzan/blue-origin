@@ -1,17 +1,20 @@
-var express      = require('express');
-var path         = require('path');
-var favicon      = require('serve-favicon');
-var logger       = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser   = require('body-parser');
+// Definining modules to be used
+var express      = require('express'),
+    path         = require('path'),
+    favicon      = require('serve-favicon'),
+    logger       = require('morgan'),
+    cookieParser = require('cookie-parser'),
+    bodyParser   = require('body-parser');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+// Defining routes
+var index = require('./routes/index'),
+    users = require('./routes/users');
 
+// Defining the express app
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'ui/templates'));
 app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
