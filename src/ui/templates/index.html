@@ -2,7 +2,6 @@
 <html>
 
 <head>
-  <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"> -->
   <meta charset="utf-8">
   <link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="animate.min.css">
@@ -12,19 +11,13 @@
 </head>
 
 <body ng-app="stemmer">
+  <!-- Heading -->
   <div id="headerText" class="centerDiv">
     <h1 class="alignTextCenter">Let's get stemming!</h1>
     <h3 class="alignTextCenter">Please enter a URL or word below</h3>
   </div>
 
-<!-- <p>Input something in the input box:</p>
-  <p>Name: <input type="text" ng-model="name"></p>
-  <p ng-bind="name"></p> -->
-
-<!-- <div class="input-group">
-    <span class="input-group-addon" id="basic-addon1">URL:</span>
-    <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
-  </div> -->
+  <!-- Static Action Form -->
   <div ng-controller='mainCtrl'>
     <form>
         <div class="row centerDiv paddingLeft">
@@ -41,8 +34,8 @@
               <div class="input-group-btn">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stem Options<span class="caret"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right">
-                  <li><button ng-click="validatesURLInput(userInput)">Stem WordList</button></li>
-                  <li><button ng-click="validateSingleWordInput(userInput)">Stem the Word</button></li>
+                  <li><button ng-click="validateURLInput(userInput)">Stem WordList</button></li>
+                  <li><button ng-click="validateWordInput(userInput)">Stem the Word</button></li>
                 </ul>
               </div>
             </div>
@@ -62,9 +55,11 @@
   <script src="dist/jquery.min.js"></script>
   <script src="dist/js/bootstrap.min.js"></script>
 
+  <!-- Global Content -->
+  <script type="text/javascript" src="content/errorMessages.js"></script>
+
   <!-- Util Scripts -->
   <script type="text/javascript" src="main.js"></script>
-  <script type="text/javascript" src="content/errorMessages.js"></script>
   <script type="text/javascript" src="validator/inputValidator.js"></script>
   <script type="text/javascript" src="controller/mainCtrl.js"></script>
 </body>
