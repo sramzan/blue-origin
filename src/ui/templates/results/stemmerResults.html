@@ -7,8 +7,8 @@
     <thead>
       <tr>
         <td>Word</td>
-        <td>Stem(s)</td>
-        <td>Affix(es)</td>
+        <td colspan="{{stemColSpan}}">Stem(s)</td>
+        <td colspan="{{affixColSpan}}">Affix(es)</td>
       </tr>
     </thead>
     <tbody>
@@ -17,7 +17,7 @@
         <td ng-repeat="stem in wordObj.stems">
           {{stem}}
         </td>
-        <td ng-repeat="affix in wordObj.affixes">
+        <td colspan="wordObj.affixes.length" ng-repeat="affix in wordObj.affixes">
           {{affix}}
         </td>
 

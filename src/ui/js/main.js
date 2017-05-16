@@ -15,7 +15,10 @@
       .state('stemResults', {
         url         : '/stemResults',
         templateUrl : '/results/stemmerResults.html',
-        controller  : 'stemWordCtrl'
+        controller  : 'stemWordCtrl',
+        params      : {
+          results : null
+        }
       });
   });
 

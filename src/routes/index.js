@@ -51,9 +51,13 @@ router.get('/stemmer', function(req, res, next) {
   // }
   // res.send(results);
   res.json({
-    word    : 'test',
-    stems   : ['stem1', 'stem2'],
-    affixes : ['affix1', 'affix2']
+      'payload' : [{
+         word    : 'test',
+         stems   : ['stem1', 'stem2'],
+         affixes : ['affix1', 'affix2']
+      }],
+      'stemColSpan'  : 2,
+      'affixColSpan' : 2
   });
   // res.redirect('/#/stemWordResults');
 });
