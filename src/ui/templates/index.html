@@ -16,7 +16,7 @@
     <h1 class="alignTextCenter">Let's get stemming!</h1>
     <h3 class="alignTextCenter">Please enter a URL or word below</h3>
   </div>
-
+<a href="#stemResults">aa</a>
   <!-- Static Action Form -->
   <div ng-controller='mainCtrl'>
     <form>
@@ -47,11 +47,11 @@
       </form>
     </div>
 
-  <div ng-view></div>
+  <div ui-view></div>
 
   <!-- Framework Scripts -->
   <script src="angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
+  <script src="release/angular-ui-router.min.js"></script>
   <script src="dist/jquery.min.js"></script>
   <script src="dist/js/bootstrap.min.js"></script>
 
@@ -63,6 +63,7 @@
   <script type="text/javascript" src="validator/inputValidator.js"></script>
   <script type="text/javascript" src="util/cors.js"></script>
   <script type="text/javascript" src="controller/mainCtrl.js"></script>
+  <script type="text/javascript" src="controller/stemWord.js"></script>
 </body>
 
 </html>

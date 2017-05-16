@@ -1,3 +1,3 @@
 function trim(input){
-  return input.trim()
+  return input.trim();
 }

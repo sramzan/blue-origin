@@ -30,7 +30,7 @@ var prefixes = {
   'mis'    : 'wrongly',
   'mono'   : 'one',
   'non'    : 'without',
-  'ommi'   : 'every',
+  'omni'   : 'every',
   'para'   : 'beside',
   'post'   : 'after',
   'pre'    : 'before',
