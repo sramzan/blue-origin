@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="animate.min.css">
+  <link rel="stylesheet" type="text/css" href="stemForm.css">
+  <title>Sean's Way to Stem</title>
+  <base href="/">
+</head>
+
+<body ng-app="stemmer">
+  <!-- Heading -->
+  <div id="headerText" class="centerDiv">
+    <h1 class="alignTextCenter">Let's get stemming!</h1>
+    <h3 class="alignTextCenter">Please enter a URL or word below</h3>
+  </div>
+
+  <!-- Static Action Form -->
+  <div ng-controller='mainCtrl'>
+    <form>
+        <div class="row centerDiv paddingLeft">
+          <div class="col-lg-10">
+            <div class="input-group">
+              <input name="userInputForStemmer"
+                     type="text"
+                     name="inputField"
+                     class="form-control"
+                     aria-label="Input word or url that links to word list to be stemmed"
+                     ng-model="userInput"
+                     ng-change="resetValidFlag()"
+              >
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stem Options<span class="caret"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li><button ng-click="validateURLInput(userInput)">Stem WordList</button></li>
+                  <li><button ng-click="validateWordInput(userInput)">Stem the Word</button></li>
+                </ul>
+              </div>
+            </div>
+            <div class="alert alert-danger animate bounce" ng-if="invalid">
+              <pre>{{errorText}}</pre>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+  <div ng-view></div>
+
+  <!-- Framework Scripts -->
+  <script src="angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
+  <script src="dist/jquery.min.js"></script>
+  <script src="dist/js/bootstrap.min.js"></script>
+
+  <!-- Global Content -->
+  <script type="text/javascript" src="content/errorMessages.js"></script>
+
+  <!-- Util Scripts -->
+  <script type="text/javascript" src="main.js"></script>
+  <script type="text/javascript" src="validator/inputValidator.js"></script>
+  <script type="text/javascript" src="util/cors.js"></script>
+  <script type="text/javascript" src="controller/mainCtrl.js"></script>
+</body>
+
+</html>
