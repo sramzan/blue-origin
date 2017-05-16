@@ -1,0 +1,28 @@
+
+<div class="panel panel-primary filterable" id="stemmerResultsDisplay">
+  <div class="panel-heading">
+    <h3 class="panel-title">Stem Results</h3>
+  </div>
+  <table class="table table-hover table-bordered">
+    <thead>
+      <tr>
+        <td>Word</td>
+        <td>Stem(s)</td>
+        <td>Affix(es)</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="wordObj in wordList">
+        <td>{{wordObj.word}}</td>
+        <td ng-repeat="stem in wordObj.stems">
+          {{stem}}
+        </td>
+        <td ng-repeat="affix in wordObj.affixes">
+          {{affix}}
+        </td>
+
+      </tr>
+    </tbody>
+
+  </table>
+</div>

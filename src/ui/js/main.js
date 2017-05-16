@@ -1,15 +1,25 @@
 (function(){
-  angular.module("stemmer", ["ngRoute"]);
-  var app = angular.module("stemmer", ["ngRoute"]);
-  app.config(function($routeProvider, $locationProvider) {
+  console.log('Testing');
+  angular.module("stemmer", ["ui.router"]);
+  var app = angular.module("stemmer", ["ui.router"]);
+  app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
+      console.log('Registering navigation');
       $locationProvider.hashPrefix('');
-      $routeProvider
-      .when("/stemWordResults", {
-          templateUrl : 'results/stemWord.html',
-          // controller  : 'controller/stemWord.js'
+      // $urlRouterProvider.otherwise('/home');
+      $stateProvider
+      .state('home', {
+          url         : '/home',
+          controller  : 'mainCtrl'
       })
-      // .when("/", {
-      //     templateUrl : "stemmer.html"
-      // })
+
+      .state('stemResults', {
+        url         : '/stemResults',
+        templateUrl : '/results/stemmerResults.html',
+        controller  : 'stemWordCtrl'
+      });
   });
+
+  app.run(['$state', function ($state) {
+    // $state.transitionTo('home');
+  }]);
 }());

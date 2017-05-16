@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'ui/templates')));
 // Node modules that will be used in the app (i.e. AngularJS)
 app.use(express.static(path.join(__dirname, '../node_modules')));
 app.use(express.static(path.join(__dirname, '../node_modules/angular')));
-app.use(express.static(path.join(__dirname, '../node_modules/angular-route')));
+app.use(express.static(path.join(__dirname, '../node_modules/angular-ui-router')));
 app.use(express.static(path.join(__dirname, '../node_modules/bootstrap')));
 app.use(express.static(path.join(__dirname, '../node_modules/jquery')));
 app.use(express.static(path.join(__dirname, '../node_modules/animate.css')));

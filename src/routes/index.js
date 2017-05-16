@@ -25,7 +25,7 @@ var express     = require('express'),
 /* GET home page. */
 router.get('/', function(req, res, next) {
   try {
-    res.redirect('index.html');
+    res.sendFile(__dirname + '/ui/templates/index.html');
   } catch (e) {
     console.log('ERROR: Cannot render homepage');
     console.log(e);
@@ -36,21 +36,24 @@ router.get('/', function(req, res, next) {
 // Call to stem algo
 router.get('/stemmer', function(req, res, next) {
   console.log('Stemming word(s) now!!');
-  var type      = req.query.type,
-      userInput = cleaner.trim(req.query.userInput),
-      results   = null;
-
-  // Client-side validation ensures proper format of word. BUT, in real env, there should be server-side validations for security purposes (i.e. in case JS is turned off in the browser)
-  if (type === SINGLE_WORD){
-    results = stemmer.stemWord(userInput);
-  }else if (type === WORD_LIST){
-    var wordList =
-    results = stemmer.stemWordList(userInput);
-  }else{
-    // TODO: Implement unrecognized type error
-  }
+  // var type      = req.query.type,
+  //     userInput = cleaner.trim(req.query.userInput),
+  //     results   = [{}];
+  //
+  // // Client-side validation ensures proper format of word. BUT, in real env, there should be server-side validations for security purposes (i.e. in case JS is turned off in the browser)
+  // if (type === SINGLE_WORD){
+  //   results = stemmer.stemWord(userInput);
+  // }else if (type === WORD_LIST){
+  //   var wordList =
+  //   results = stemmer.stemWordList(userInput);
+  // }else{
+  //   // TODO: Implement unrecognized type error
+  // }
+  // res.send(results);
   res.json({
-    // 'status' : 'SUCCESS'
+    word    : 'test',
+    stems   : ['stem1', 'stem2'],
+    affixes : ['affix1', 'affix2']
   });
   // res.redirect('/#/stemWordResults');
 });
