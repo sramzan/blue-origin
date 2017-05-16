@@ -19,13 +19,14 @@ function ErrValidator(){
   }
 
   /*
+    * Function will default to RegExp default behavior when created with a regex of "" if regex is not passed
     * @param {String} input - The input text provided by the user
     * @param {String} regexLookup - Could use commonly used regex expression defined in validator, or pass in custom regex
     * @returns {Boolean} True if the input contains an illegal character, false if not
   */
   this.containsInvalidInput = function(input, regexLookup){
     var regex = regexLookup || "";
-        regex = commonRegexPatterns[regex] || regex;
+    regex = commonRegexPatterns[regex] || regex;
     return this.matchesPattern(input, regex); // return false if it contains the illegal chars
   }
 
