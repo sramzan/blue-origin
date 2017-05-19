@@ -4,7 +4,7 @@
 var path = require('path');
 
 // Consts
-var ROOT_DIRECTORY = path.resolve(__dirname, '../../../src/'),
+var ROOT_DIRECTORY = path.resolve(__dirname, '../../../../src/'),
     SINGLE_WORD    = 'singleWord',
     WORD_LIST      = 'wordList';
 
