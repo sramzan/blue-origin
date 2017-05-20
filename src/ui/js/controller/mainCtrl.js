@@ -31,7 +31,7 @@
             response.config.params.context.changeState('stemResults', response.data);
           }, function(error){
         });
-      };
+      }
 
       // Scope Level Methods/Attributes
       $scope.invalid = false;

@@ -42,4 +42,4 @@ suffixes = {
   'wards' : 'direction',
   'wise'  : 'in relation to',
 
-}
+};

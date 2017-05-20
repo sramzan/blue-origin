@@ -25,6 +25,7 @@
       Prefix is the thing attached to the root of the word
       Suffix is the thing attached to the end of the root
         - Could try to find route, otherwise find the affixes first
+        technically, a suffix is a syllable (one sound) added to the end of a word to change its meaning or give it grammatical function. a prefix is just the opposite. a prefix can be one or more syllables added to the beginning of a word to change it's meaning.
 */
 var path         = require('path'),
     configs      = require(path.resolve(__dirname, '../configs/stemmerConfigs')),
@@ -83,7 +84,6 @@ function getNumberOfSyllables(word){
 }
 
 exports.stemWord = function(word){
-  var numOfSyllablesInWord = getNumberOfSyllables(word);
 
   // Default payload
   var stems   = [],
@@ -94,7 +94,8 @@ exports.stemWord = function(word){
         'affixes' : affixes
       };
 
-  if (numOfSyllablesInWord > 1){ // Only care about words with 2 or more syllables, otherwise we assume the word passed is the root word
+  if (word.length > 3){ // Only care about words with 2 or more syllables, otherwise we assume the word passed is the root word
+    var numOfSyllablesInWord = getNumberOfSyllables(word);
     if (numOfSyllablesInWord > 3){ // All forms for our problem state a pattern of 3 except for a form with all stems, which can have n stems
       deconstructedWordPayload.stems = breakUpWordBySyllable(word);
       return deconstructedWordPayload;
