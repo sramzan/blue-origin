@@ -53,7 +53,7 @@ router.get('/stemmer', function(req, res, next) {
   // }
   // res.send(results);
   var stemEngine = new stemUtil.StemEngine(1,2);
-  stemEngine.test();
+  stemEngine.stemWordList();
   res.json({
       'payload' : [{
          word    : 'test',

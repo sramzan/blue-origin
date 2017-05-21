@@ -7,6 +7,7 @@ var path = require('path');
 var ROOT_DIRECTORY = path.resolve(__dirname, '../../../../src/'),
     LIB_DIR        = ROOT_DIRECTORY + '/server/lib/',
     UTIL_DIR       = ROOT_DIRECTORY + '/server/common/util/',
+    CONTENT_DIR    = ROOT_DIRECTORY + '/server/common/content/',
     STEMMER_DIR    = ROOT_DIRECTORY + '/server/stemmer/';
 
 // Consts
@@ -22,7 +23,10 @@ module.exports = {
     'STEMMER_DIR'    : STEMMER_DIR
   },
   consts : {
-    'SINGLE_WORD' : SINGLE_WORD,
-    'WORD_LIST'   : WORD_LIST
+    'SINGLE_WORD'    : SINGLE_WORD,
+    'WORD_LIST'      : WORD_LIST
+  },
+  content : {
+    'exceptionContent' : require(CONTENT_DIR + 'exceptionContent')
   }
 };
