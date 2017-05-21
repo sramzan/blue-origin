@@ -1,6 +1,6 @@
 module.exports = {
   static : {
-    'invalidWordListInput' : 'Bad input passed to be stemmed!',
+    'invalidWordListInput' : 'Bad word list input passed to be stemmed!',
     'invalidWord'          : 'Bad word in list!'
   },
   dynamic : {
