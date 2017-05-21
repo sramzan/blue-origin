@@ -22,12 +22,12 @@ var stemEngine = function StemEngine(wordList, language){
   // this.stemRules      = stemRuleMapper.lookup(language); // TODO - Move logic to here to allow for future languages
 };
 
-function isArr(errorContentParams){
+function throwConstructorError(errorContentParams){
   errorContentParams.expectedType = 'Array';
   console.log(exceptionMessages.static.invalidWordListInput + '\n' + // TODO: Change to throw when done testing
               exceptionMessages.dynamic.notExpectedType(errorContentParams));
 }
-function validInput(input){
+function isValidInput(input){
   return input !== null && input !== undefined;
 }
 
@@ -40,9 +40,10 @@ stemEngine.prototype.stemWordList = function(){
       word  = '';
     for (; index < this.wordListLength; index++){
       word = this.wordListLength[index];
-      if (validInput(word)){
-        // if()
-        runRulesOn();
+      if (isValidInput(word)){
+        if(word.length > 3){
+            // runRulesOn();
+        }
       }else{
         this.errorContentParam.expectedType = 'Number'; //TODO: Move this error throwing logic to new module
         console.log(exceptionMessages.static.invalidWord + '\n' + // TODO: Change to throw when done testing
