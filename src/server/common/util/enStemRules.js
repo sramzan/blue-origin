@@ -12,6 +12,9 @@ function isValidInput(input){
 
 // end move
 
+var prefixDict   = {},
+    suffixDict   = {},
+    analyzedWords = {}; // word : {word: word, stems : [], affixes : []}
 function circumfixAffixPatternCheck(word){
   var frontIndex      = 0,
       backIndex       = word.length - 1,
@@ -35,6 +38,38 @@ function circumfixAffixPatternCheck(word){
   }
   return results;
 }
+
+function prefixPatternCheck(word1, word2){
+  var currentCharIndex = 0,
+      expr1 = '',
+      expr2 = '',
+      currentPrefix = [],
+      results = {
+        'matches' : false,
+        'prefix'  : null
+      };
+  for (; currentCharIndex < word1.length; currentCharIndex++){
+    expr1 = expr1 + word1.charAt(currentCharIndex);
+    expr2 = expr2 + word2.charAt(currentCharIndex);
+    if (prefixDict.hasOwnProperty(expr1) || areEqual(expr1, expr2)){ // Check if the prefix has already been found
+      currentPrefix = [expr1];
+      if (!prefixDict.hasOwnProperty(expr1)){ // If new prefix found, add it to the dict
+          prefixDict[expr1] = true;
+      }
+      continue;
+    }else{
+      break;
+    }
+  }
+
+  if(currentPrefix.length > 0){
+    results.matches = true;
+    results.prefix  = currentPrefix;
+  }
+
+  return results;
+}
+
 
 function prefixPattern(wordList, currentIndex){
   if (currentIndex+1 >= wordList.length){
@@ -86,22 +121,13 @@ function generateAnalyzedWordObj(word, stems, affixes){
 
 function buildPrefixesAndSuffixes(wordList){
   wordList = wordList.sort();
-  var prefixDict   = {},
-      suffixDict   = {},
-      currentIndex = 0,
-      currentCharIndex = 0,
+  var currentIndex = 0,
       listLength   = wordList.length,
       word1        = '',
       word2        = '',
-      expr1        = '',
-      expr2        = '',
-      hasPrefix    = false,
-      analyzedWords = {}; // word : {word: word, stems : [], affixes : []}
+      hasPrefix    = false;
 
   for (; currentIndex < listLength; currentIndex++){
-    currentCharIndex = 0;
-    expr1 = '';
-    expr2 = '';
     word1 = wordList[currentIndex];
     word2 = (currentIndex + 1) < listLength ? wordList[currentIndex+1] : ""; // Check for when word1 is the last word in the array
 
@@ -119,21 +145,12 @@ function buildPrefixesAndSuffixes(wordList){
       }
 
       // Prefix check
-      var currentPrefix = [];
-      for (; currentCharIndex < word1.length; currentCharIndex++){
-        expr1 = expr1 + word1.charAt(currentCharIndex);
-        expr2 = expr2 + word2.charAt(currentCharIndex);
-        if (prefixDict.hasOwnProperty(expr1) || areEqual(expr1, expr2)){ // Check if the prefix has already been found
-          currentPrefix = [expr1];
-          if (!prefixDict.hasOwnProperty(expr1)){ // If new prefix found, add it to the dict
-              prefixDict[expr1] = true;
-          }
-          continue;
-        }else{
-          break;
-        }
+      var prefixPattern = prefixPatternCheck(word1, word2);
+      if (prefixPattern.matches){
+        hasPrefix = true;
       }
-      analyzedWords[word1] = generateAnalyzedWordObj(word1, [], {'prefix' : currentPrefix});
+
+      analyzedWords[word1] = generateAnalyzedWordObj(word1, [], {'prefix' : prefixPattern.prefix});
 
       // Suffix Check
     }
