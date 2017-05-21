@@ -3,8 +3,9 @@
 var regexExpressions = {
   vowels     : /[aeiouy]/gi, // searches for all matches, and ignores case
   consonants : /[^aeiou]/gi,
-  vowel      : "[aeiouy]", 
-  consonant  : "[^aeiou]"
+  vowel      : "[aeiouy]",
+  consonant  : "[^aeiou]",
+  anySpace   : /\s/gi
 };
 
 module.exports.lookup = function(key){

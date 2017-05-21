@@ -6,8 +6,16 @@ function areEqual(str1, str2){
   return str1 === str2;
 }
 
+function cleanUp(input){
+  return input.trim().toLowerCase();
+}
+//
+// function containSpace(input){
+//   return
+// }
+
 function isValidInput(input){
-  return input !== null && input !== undefined;
+  return input !== null && input !== undefined && input.trim() !== ''; //&& !containsSpace(input);
 }
 
 // end move
@@ -15,6 +23,7 @@ function isValidInput(input){
 var prefixDict   = {},
     suffixDict   = {},
     analyzedWords = {}; // word : {word: word, stems : [], affixes : []}
+
 function circumfixAffixPatternCheck(word){
   var frontIndex      = 0,
       backIndex       = word.length - 1,
@@ -132,6 +141,8 @@ function buildPrefixesAndSuffixes(wordList){
     word2 = (currentIndex + 1) < listLength ? wordList[currentIndex+1] : ""; // Check for when word1 is the last word in the array
 
     if (isValidInput(word1)){
+      word1 = cleanUp(word1);
+      word2 = isValidInput(word2) ? cleanUp(word2) : "";
       // Do not analye duplicate word
       if (analyzedWords.hasOwnProperty(word1)){
         continue;
@@ -161,7 +172,7 @@ function buildPrefixesAndSuffixes(wordList){
 
 }
 
-console.log(JSON.stringify(buildPrefixesAndSuffixes(['apple', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten'])));
+console.log(JSON.stringify(buildPrefixesAndSuffixes(['apple', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', '', null, undefined])));
 // console.log(buildPrefixesAndSuffixes(['apple', 'banana', 'aardvark', 'aardwolf', 'aaron', 'aback']));
 
 // module.exports = {
