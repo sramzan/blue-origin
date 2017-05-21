@@ -1,12 +1,13 @@
 var express     = require('express'),
     path        = require('path'),
     configs     = require(path.resolve(__dirname, '../common/configs/globalConfigs')),
-    cleaner     = require(path.resolve(__dirname, '../common/util/stringUtil')),
+    utils       = require(path.resolve(__dirname, '../common/util/utils')),
+    // cleaner     = require(path.resolve(__dirname, '../common/util/stringUtil')),
     router      = express.Router(),
+    stemUtil    = utils.stemmer;
     ROOT_DIR    = configs.paths.ROOT_DIRECTORY,
     SINGLE_WORD = configs.consts.SINGLE_WORD,
     WORD_LIST   = configs.consts.WORD_LIST;
-
     // router.use(function(req, res, next) {
     //   console.log('Setting stuff');
     //     res.header("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -36,6 +37,7 @@ router.get('/', function(req, res, next) {
 // Call to stem algo
 router.get('/stemmer', function(req, res, next) {
   console.log('Stemming word(s) now!!');
+
   // var type      = req.query.type,
   //     userInput = cleaner.trim(req.query.userInput),
   //     results   = [{}];
@@ -50,6 +52,8 @@ router.get('/stemmer', function(req, res, next) {
   //   // TODO: Implement unrecognized type error
   // }
   // res.send(results);
+  var stemEngine = new stemUtil.StemEngine(1,2);
+  stemEngine.test();
   res.json({
       'payload' : [{
          word    : 'test',

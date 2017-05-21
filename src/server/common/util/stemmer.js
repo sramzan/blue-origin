@@ -27,10 +27,18 @@
         - Could try to find route, otherwise find the affixes first
         technically, a suffix is a syllable (one sound) added to the end of a word to change its meaning or give it grammatical function. a prefix is just the opposite. a prefix can be one or more syllables added to the beginning of a word to change it's meaning.
 */
+
+// File Level modules
 var path         = require('path'),
     configs      = require(path.resolve(__dirname, '../configs/stemmerConfigs')),
     regexDict    = configs.modules.regexDict,
     enExceptions = configs.modules.enExceptions;
+
+function StemEngine(wordList, language){
+  this.wordList       = wordList;
+  this.wordListLength = wordList.length;
+  this.stemRules      = stemRules.lookup(language);
+}
 
 function isEven(num){
   return (num % 2) === 0;
@@ -83,29 +91,33 @@ function getNumberOfSyllables(word){
 
 }
 
-exports.stemWord = function(word){
+function isCircumfix
+
+exports.stemWord = function(wordList){
 
   // Default payload
-  var stems   = [],
-      affixes = [],
+  var stems          = [],
+      affixes        = [],
+      currentIndex   = 0,
+      wordListLength = wordList.length,
       deconstructedWordPayload = {
         'word'    : word,
         'stems'   : stems,
         'affixes' : affixes
       };
 
-  if (word.length > 3){ // Only care about words with 2 or more syllables, otherwise we assume the word passed is the root word
-    var numOfSyllablesInWord = getNumberOfSyllables(word);
-    if (numOfSyllablesInWord > 3){ // All forms for our problem state a pattern of 3 except for a form with all stems, which can have n stems
-      deconstructedWordPayload.stems = breakUpWordBySyllable(word);
-      return deconstructedWordPayload;
+  wordList.sort(); // TODO: Replace with trie implementation so that we could more effectively sort the deconstructed words (also helps finding prefixes)
+  for (; currentIndex < wordList.length; currentIndex++){
+    var word = wordList[currentIndex];
 
-      // Infix - check if two syllables are joined by a single vowel or consonant. This is an infix? - Think about this
+    if (index+1 === wordListLength){ // get rid of this
 
-      // Circumfix - check if first & last syllables are the same, if so this is a Circumfix setup
-      var context = {};
-      checkForPrefix(word);
     }
+    if (word.length > 3){ // Only care about words with 2 or more syllables, otherwise we assume the word passed is the root word
+      // Check for circumfix
+      runStemRules()
+    }
+  }
   return deconstructedWordPayload;
   }
 };

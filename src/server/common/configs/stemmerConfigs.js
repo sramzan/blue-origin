@@ -1,25 +1,29 @@
 // Configs for Stem Algorithm
 
-// Modules
-var path = require('path');
+// Node Modules & Global Configs
+var path = require('path'),
+    globalConfigs = require(path.resolve(__dirname, './globalConfigs'));
+    
+// Dir Paths
+var LIB_DIR  = globalConfigs.paths.LIB_DIR;
+    UTIL_DIR = globalConfigs.paths.UTIL_DIR;
 
+// Custom Modules
+var regexDict      = require(LIB_DIR + 'regexDict'),
+    enExceptions   = require(LIB_DIR + 'enExceptions'),
+    stemRuleMapper = require(LIB_DIR + 'stemRules');
 
-// Dirs
-var ROOT_DIRECTORY = path.resolve(__dirname, '../../../../src/'),
-    LIB_DIR        = ROOT_DIRECTORY + '/server/lib/';
-
-// Files
-var regexDict    = require(LIB_DIR + 'regexDict'),
-    enExceptions = require(LIB_DIR + 'enExceptions');
+// Custom Stem Modules (in case of future language support)
+var enStemRules = require(LIB_DIR + 'stemRules');
 
 // Export Configs
 module.exports = {
   modules : {
-    regexDict    : regexDict,
-    enExceptions : enExceptions
+    'regexDict'      : regexDict,
+    'enExceptions'   : enExceptions,
+    'stemRuleMapper' : stemRuleMapper
   },
-  paths   : {
-    ROOT_DIRECTORY : ROOT_DIRECTORY,
-    LIB_DIR        : LIB_DIR
+  stemRuleModules : {
+    'enStemRules'    : enStemRules
   }
 };
