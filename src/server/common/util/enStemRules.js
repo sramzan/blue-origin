@@ -175,8 +175,7 @@ function buildPrefixesAndSuffixes(wordList){
           expr2 = '',
           reversedWord1 = reverseString(word1),
           indexOfReversedWord2 = reversedWordList.indexOf(reversedWord1) + 1;
-          reversedWord2 = indexOfReversedWord2 < listLength ? reversedWordList[indexOfReversedWord2] : '';
-
+          reversedWord2 = indexOfReversedWord2 < listLength ? reversedWordList[indexOfReversedWord2] : '',
           currentSuffix = { 'suffix' : [] };
       if (isValidInput(reversedWord1)){
         reversedWord1 = cleanUp(reversedWord1);
@@ -201,36 +200,23 @@ function buildPrefixesAndSuffixes(wordList){
         }
       }
 
-      if (currentSuffix.suffix.length > 0){
-        analyzedWords[word1] = generateAnalyzedWordObj(word1, [], {'suffixes' : currentSuffix.suffix,
-                                                                    'prefix'  : prefixPattern.prefix});
+      // get stems
+      var stem = word1;
+
+      if (prefixPattern.prefix && prefixPattern.prefix.length > 0){
+        stem = stem.replace(prefixPattern.prefix[0], '');
+        // stem = stem.substring(stem.length - prefixPattern.prefix.length);
       }
 
+      if (currentSuffix.suffix && currentSuffix.suffix.length > 0){
+        // stem = word1.replace(currentSuffix.suffix[0], '');
+        stem = stem.substring(0, (stem.length - currentSuffix.suffix[0].length));
+      }
 
-      // backIndex = word1.length-1;
-      // var expr1 = '',
-      //     expr2 = '',
-      //     reversedExpr1 = '',
-      //     reversedExpr2 = '',
-      //     hasSuffix     = false;
-      // for (; backIndex11 > 0; backIndex--){
-      //     expr1 = expr1 + word1.charAt(backIndex);
-      //     expr2 = expr2 + word2.charAt(backIndex);
-      //     reversedExpr1 = reverseString(expr1);
-      //     reversedExpr2 = reverseString(expr2);
-      //     if (suffixDict.hasOwnProperty(reversedExpr1) || areEqual(reversedExpr1, reversedExpr2)){
-      //       hasSuffix = true;
-      //       currentSuffix = reversedExpr1;
-      //       if (suffixDict.hasOwnProperty(reversedExpr1)){
-      //         suffixDict[reversedExpr1] = true;
-      //       }
-      //       continue;
-      //     }else{
-      //       break;
-      //     }
-      // }
-
-      // analyzedWords[word1] = generateAnalyzedWordObj(word1, [], {'prefix' : prefixPattern.prefix});
+      if (currentSuffix.suffix.length > 0){
+        analyzedWords[word1] = generateAnalyzedWordObj(word1, [stem], {'suffixes' : currentSuffix.suffix,
+                                                                    'prefix'  : prefixPattern.prefix});
+      }
 
       // Suffix Check
     }
