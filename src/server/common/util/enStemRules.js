@@ -30,7 +30,7 @@ function circumfixAffixPatternCheck(word){
       frontExpression = '',
       backExpression  = '',
       results         = {
-                          'matches' : false,
+                          'matched' : false,
                           'affixes' : {},
                           'stems'   : []
                         };
@@ -39,7 +39,7 @@ function circumfixAffixPatternCheck(word){
     backExpression  = backExpression  + word.charAt(backIndex);
     if(areEqual(frontExpression, reverseString(backExpression))){
         if ((frontIndex < backIndex) && ((frontIndex + 1) !== backIndex)){
-        results.matches = true;
+        results.matched = true;
         results.affixes = {'circumfix' : [word.substring(0, frontIndex+1)]}; // TODO: Make circumfix a global config
         results.stems   = [word.substring(frontIndex+1, backIndex)];
       }
@@ -48,22 +48,20 @@ function circumfixAffixPatternCheck(word){
   return results;
 }
 
-function prefixPatternCheck(word1, word2){
-  var currentCharIndex = 0,
-      expr1 = '',
+function checkIfPatternExists(word1, word2, dict, type){
+  var expr1 = '',
       expr2 = '',
-      currentPrefix = [],
-      results = {
-        'matches' : false,
-        'prefix'  : null
-      };
+      currentCharIndex = 0,
+      results = { 'matched' : false, };
+  results[type] = [];
+
   for (; currentCharIndex < word1.length; currentCharIndex++){
     expr1 = expr1 + word1.charAt(currentCharIndex);
     expr2 = expr2 + word2.charAt(currentCharIndex);
-    if (prefixDict.hasOwnProperty(expr1) || areEqual(expr1, expr2)){ // Check if the prefix has already been found
-      results.prefix = [expr1];
-      if (!prefixDict.hasOwnProperty(expr1)){ // If new prefix found, add it to the dict
-          prefixDict[expr1] = true;
+    if (dict.hasOwnProperty(expr1) || areEqual(expr1, expr2)){ // Check if the prefix has already been found
+      results[type] = (type === 'suffixes') ? [reverseString(expr1)] : [expr1];
+      if (!dict.hasOwnProperty(expr1)){ // If new prefix found, add it to the dict
+          dict[expr1] = true;
       }
       continue;
     }else{
@@ -71,39 +69,37 @@ function prefixPatternCheck(word1, word2){
     }
   }
 
-  if(results.prefix && results.prefix.length > 0){
-    results.matches = true;
-  }
-
   return results;
 }
 
+function prefixPatternCheck(word1, word2){
+  var results = checkIfPatternExists(word1, word2, prefixDict, 'prefix');
 
-// function prefixPattern(wordList, currentIndex){
-//   if (currentIndex+1 >= wordList.length){
-//     // Need to figure out what to do
-//   }
-//   var currentIndex = 0,
-//       word1        = wordList[currentIndex],
-//       word1Length  = word1.length,
-//       word2        = wordList[currentIndex+1],
-//       expr1        = '',
-//       expr2        = '',
-//       results      = {
-//                        'matches' : false,
-//                        'affixes' : [],
-//                        'stem'   : []
-//                      };
-//   if (isValidInput(word2) && word2Length > 3){
-//
-//   }else{
-//     return results;
-//   }
-//   for (; currentIndex < listLength; currentIndex++){
-//
-//   }
-//
-// }
+  if(results.prefix && results.prefix.length > 0){
+    results.matched = true;
+  }
+  return results;
+}
+
+function suffixPatternCheck(word1, word2, reversedWordList){
+  var listLength           = reversedWordList.length,
+      reversedWord1        = reverseString(word1),
+      indexOfReversedWord2 = reversedWordList.indexOf(reversedWord1) + 1;
+      reversedWord2        = indexOfReversedWord2 < listLength ? reversedWordList[indexOfReversedWord2] : '',
+      results              = {};
+
+  if (isValidInput(reversedWord1)){
+    reversedWord1 = cleanUp(reversedWord1);
+    reversedWord2 = isValidInput(reversedWord2) ? cleanUp(reversedWord2) : '';
+    results = checkIfPatternExists(reversedWord1, reversedWord2, suffixDict, 'suffixes');
+  }
+
+  if(results.suffixes && results.suffixes.length > 0){
+    results.matched = true;
+  }
+  return results;
+}
+
 
 function generateAnalyzedWordObj(word, stems, affixes){
   var typesOfAffixes = ['prefix', 'suffixes', 'circumfix', 'infix'],
@@ -143,6 +139,8 @@ function buildPrefixesAndSuffixes(wordList){
       hasPrefix    = false;
 
   for (; currentIndex < listLength; currentIndex++){
+    hasPrefix = false;
+    hasSuffix = false;
     word1 = wordList[currentIndex];
     word2 = (currentIndex + 1) < listLength ? wordList[currentIndex+1] : ""; // Check for when word1 is the last word in the array
 
@@ -156,69 +154,37 @@ function buildPrefixesAndSuffixes(wordList){
 
       // Check for circumfix pattern
       var circumfixPattern = circumfixAffixPatternCheck(word1);
-      if (circumfixPattern.matches){
+      if (circumfixPattern.matched){
         analyzedWords[word1] = generateAnalyzedWordObj(word1, circumfixPattern.stems, circumfixPattern.affixes);
         continue;
       }
 
       // Prefix check
-      var prefixPattern = prefixPatternCheck(word1, word2);
-      if (prefixPattern.matches){
+      var prefixCheckResults = prefixPatternCheck(word1, word2);
+      if (prefixCheckResults.matched){
         hasPrefix = true;
       }
 
       // Suffix Check
-      var currentReversedIndex = 0,
-          reversedLength = reversedWordList.length,
-          currentCharIndex = 0,
-          expr1 = '',
-          expr2 = '',
-          reversedWord1 = reverseString(word1),
-          indexOfReversedWord2 = reversedWordList.indexOf(reversedWord1) + 1;
-          reversedWord2 = indexOfReversedWord2 < listLength ? reversedWordList[indexOfReversedWord2] : '',
-          currentSuffix = { 'suffix' : [] };
-      if (isValidInput(reversedWord1)){
-        reversedWord1 = cleanUp(reversedWord1);
-        reversedWord2 = isValidInput(reversedWord2) ? cleanUp(reversedWord2) : '';
-
-        for(; currentCharIndex < reversedWord1.length; currentCharIndex++){
-          expr1 = expr1 + reversedWord1.charAt(currentCharIndex);
-          expr2 = expr2 + reversedWord2.charAt(currentCharIndex);
-          if (suffixDict.hasOwnProperty(expr1) || areEqual(expr1, expr2)){ // Check if the prefix has already been found
-            currentSuffix.suffix = [reverseString(expr1)];
-            if (!suffixDict.hasOwnProperty(expr1)){ // If new prefix found, add it to the dict
-                suffixDict[expr1] = true;
-            }
-            continue;
-          }else{
-            break;
-          }
-          // if(currentPrefix.length > 0){
-          //   results.matches = true;
-          //   results.prefix  = currentPrefix;
-          // }
-        }
+      var suffixCheckResults = suffixPatternCheck(word1, word2, reversedWordList);
+      if (suffixCheckResults.matched){
+        hasSuffix = true;
       }
 
-      // get stems
+      // Get stems based on prefix & suffix check
       var stem = word1;
-
-      if (prefixPattern.prefix && prefixPattern.prefix.length > 0){
-        stem = stem.replace(prefixPattern.prefix[0], '');
-        // stem = stem.substring(stem.length - prefixPattern.prefix.length);
+      if (hasPrefix){
+        stem = stem.replace(prefixCheckResults.prefix[0], '');
+        // stem = stem.substring(stem.length - prefixCheckResults.prefix.length);
       }
 
-      if (currentSuffix.suffix && currentSuffix.suffix.length > 0){
+      if (hasSuffix){
         // stem = word1.replace(currentSuffix.suffix[0], '');
-        stem = stem.substring(0, (stem.length - currentSuffix.suffix[0].length));
+        stem = stem.substring(0, (stem.length - suffixCheckResults.suffixes[0].length));
       }
 
-      if (currentSuffix.suffix.length > 0){
-        analyzedWords[word1] = generateAnalyzedWordObj(word1, [stem], {'suffixes' : currentSuffix.suffix,
-                                                                    'prefix'  : prefixPattern.prefix});
-      }
-
-      // Suffix Check
+        analyzedWords[word1] = generateAnalyzedWordObj(word1, [stem], {'suffixes' : suffixCheckResults.suffixes,
+                                                                       'prefix'   : prefixCheckResults.prefix});
     }
   }
 
