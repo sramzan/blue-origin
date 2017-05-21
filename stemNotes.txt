@@ -42,3 +42,6 @@ if (word.length > 3){ // Only care about words with 2 or more syllables, otherwi
     checkForPrefix(word);
   }
 return deconstructedWordPayload;
+
+
+http://stackoverflow.com/questions/6682951/why-is-looping-through-an-array-so-much-faster-than-javascripts-native-indexof

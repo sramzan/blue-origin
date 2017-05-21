@@ -61,7 +61,7 @@ function prefixPatternCheck(word1, word2){
     expr1 = expr1 + word1.charAt(currentCharIndex);
     expr2 = expr2 + word2.charAt(currentCharIndex);
     if (prefixDict.hasOwnProperty(expr1) || areEqual(expr1, expr2)){ // Check if the prefix has already been found
-      currentPrefix = [expr1];
+      results.prefix = [expr1];
       if (!prefixDict.hasOwnProperty(expr1)){ // If new prefix found, add it to the dict
           prefixDict[expr1] = true;
       }
@@ -71,40 +71,39 @@ function prefixPatternCheck(word1, word2){
     }
   }
 
-  if(currentPrefix.length > 0){
+  if(results.prefix && results.prefix.length > 0){
     results.matches = true;
-    results.prefix  = currentPrefix;
   }
 
   return results;
 }
 
 
-function prefixPattern(wordList, currentIndex){
-  if (currentIndex+1 >= wordList.length){
-    // Need to figure out what to do
-  }
-  var currentIndex = 0,
-      word1        = wordList[currentIndex],
-      word1Length  = word1.length,
-      word2        = wordList[currentIndex+1],
-      expr1        = '',
-      expr2        = '',
-      results      = {
-                       'matches' : false,
-                       'affixes' : [],
-                       'stem'   : []
-                     };
-  if (isValidInput(word2) && word2Length > 3){
-
-  }else{
-    return results;
-  }
-  for (; currentIndex < listLength; currentIndex++){
-
-  }
-
-}
+// function prefixPattern(wordList, currentIndex){
+//   if (currentIndex+1 >= wordList.length){
+//     // Need to figure out what to do
+//   }
+//   var currentIndex = 0,
+//       word1        = wordList[currentIndex],
+//       word1Length  = word1.length,
+//       word2        = wordList[currentIndex+1],
+//       expr1        = '',
+//       expr2        = '',
+//       results      = {
+//                        'matches' : false,
+//                        'affixes' : [],
+//                        'stem'   : []
+//                      };
+//   if (isValidInput(word2) && word2Length > 3){
+//
+//   }else{
+//     return results;
+//   }
+//   for (; currentIndex < listLength; currentIndex++){
+//
+//   }
+//
+// }
 
 function generateAnalyzedWordObj(word, stems, affixes){
   var typesOfAffixes = ['prefix', 'suffixes', 'circumfix', 'infix'],
@@ -130,7 +129,14 @@ function generateAnalyzedWordObj(word, stems, affixes){
 
 function buildPrefixesAndSuffixes(wordList){
   wordList = wordList.sort();
+  var reversedWordList = wordList.map(function(str){
+    if(isValidInput(str)){
+      return reverseString(str);
+    }
+  });
+  reversedWordList = reversedWordList.sort();
   var currentIndex = 0,
+      backIndex    = 0,
       listLength   = wordList.length,
       word1        = '',
       word2        = '',
@@ -161,7 +167,70 @@ function buildPrefixesAndSuffixes(wordList){
         hasPrefix = true;
       }
 
-      analyzedWords[word1] = generateAnalyzedWordObj(word1, [], {'prefix' : prefixPattern.prefix});
+      // Suffix Check
+      var currentReversedIndex = 0,
+          reversedLength = reversedWordList.length,
+          currentCharIndex = 0,
+          expr1 = '',
+          expr2 = '',
+          reversedWord1 = reverseString(word1),
+          indexOfReversedWord2 = reversedWordList.indexOf(reversedWord1) + 1;
+          reversedWord2 = indexOfReversedWord2 < listLength ? reversedWordList[indexOfReversedWord2] : '';
+
+          currentSuffix = { 'suffix' : [] };
+      if (isValidInput(reversedWord1)){
+        reversedWord1 = cleanUp(reversedWord1);
+        reversedWord2 = isValidInput(reversedWord2) ? cleanUp(reversedWord2) : '';
+
+        for(; currentCharIndex < reversedWord1.length; currentCharIndex++){
+          expr1 = expr1 + reversedWord1.charAt(currentCharIndex);
+          expr2 = expr2 + reversedWord2.charAt(currentCharIndex);
+          if (suffixDict.hasOwnProperty(expr1) || areEqual(expr1, expr2)){ // Check if the prefix has already been found
+            currentSuffix.suffix = [reverseString(expr1)];
+            if (!suffixDict.hasOwnProperty(expr1)){ // If new prefix found, add it to the dict
+                suffixDict[expr1] = true;
+            }
+            continue;
+          }else{
+            break;
+          }
+          // if(currentPrefix.length > 0){
+          //   results.matches = true;
+          //   results.prefix  = currentPrefix;
+          // }
+        }
+      }
+
+      if (currentSuffix.suffix.length > 0){
+        analyzedWords[word1] = generateAnalyzedWordObj(word1, [], {'suffixes' : currentSuffix.suffix,
+                                                                    'prefix'  : prefixPattern.prefix});
+      }
+
+
+      // backIndex = word1.length-1;
+      // var expr1 = '',
+      //     expr2 = '',
+      //     reversedExpr1 = '',
+      //     reversedExpr2 = '',
+      //     hasSuffix     = false;
+      // for (; backIndex11 > 0; backIndex--){
+      //     expr1 = expr1 + word1.charAt(backIndex);
+      //     expr2 = expr2 + word2.charAt(backIndex);
+      //     reversedExpr1 = reverseString(expr1);
+      //     reversedExpr2 = reverseString(expr2);
+      //     if (suffixDict.hasOwnProperty(reversedExpr1) || areEqual(reversedExpr1, reversedExpr2)){
+      //       hasSuffix = true;
+      //       currentSuffix = reversedExpr1;
+      //       if (suffixDict.hasOwnProperty(reversedExpr1)){
+      //         suffixDict[reversedExpr1] = true;
+      //       }
+      //       continue;
+      //     }else{
+      //       break;
+      //     }
+      // }
+
+      // analyzedWords[word1] = generateAnalyzedWordObj(word1, [], {'prefix' : prefixPattern.prefix});
 
       // Suffix Check
     }
@@ -172,7 +241,7 @@ function buildPrefixesAndSuffixes(wordList){
 
 }
 
-console.log(JSON.stringify(buildPrefixesAndSuffixes(['apple', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', '', null, undefined])));
+console.log(JSON.stringify(buildPrefixesAndSuffixes(['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', '', null, undefined])));
 // console.log(buildPrefixesAndSuffixes(['apple', 'banana', 'aardvark', 'aardwolf', 'aaron', 'aback']));
 
 // module.exports = {
