@@ -29,7 +29,7 @@ function circumfixAffixPatternCheck(word){
         if ((frontIndex < backIndex) && ((frontIndex + 1) !== backIndex)){
         results.matches = true;
         results.affixes = {'circumfix' : [word.substring(0, frontIndex+1)]}; // TODO: Make circumfix a global config
-        results.stems   = [word.substring(frontIndex, backIndex)];
+        results.stems   = [word.substring(frontIndex+1, backIndex)];
       }
     }
   }
@@ -112,11 +112,11 @@ function buildPrefixesAndSuffixes(wordList){
       }
 
       // Check for circumfix pattern
-      // var circumfixPattern = circumfixAffixPatternCheck(word1);
-      // if (circumfixPattern.matches){
-      //   analyzedWords.word1 = generateAnalyzedWordObj(word1, circumfixPattern.stems, circumfixPattern.affixes);
-      //   continue;
-      // }
+      var circumfixPattern = circumfixAffixPatternCheck(word1);
+      if (circumfixPattern.matches){
+        analyzedWords[word1] = generateAnalyzedWordObj(word1, circumfixPattern.stems, circumfixPattern.affixes);
+        continue;
+      }
 
       // Prefix check
       var currentPrefix = [];
@@ -144,7 +144,7 @@ function buildPrefixesAndSuffixes(wordList){
 
 }
 
-console.log(JSON.stringify(buildPrefixesAndSuffixes(['apple', 'banana', 'aardvark', 'aardwolf', 'aaron'])));
+console.log(JSON.stringify(buildPrefixesAndSuffixes(['apple', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten'])));
 // console.log(buildPrefixesAndSuffixes(['apple', 'banana', 'aardvark', 'aardwolf', 'aaron', 'aback']));
 
 // module.exports = {
