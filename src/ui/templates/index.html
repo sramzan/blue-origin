@@ -16,36 +16,43 @@
     <h1 class="alignTextCenter">Let's get stemming!</h1>
     <h3 class="alignTextCenter">Please enter a URL or word below</h3>
   </div>
-<a href="#stemResults">aa</a>
   <!-- Static Action Form -->
   <div ng-controller='mainCtrl'>
-    <form>
-        <div class="row centerDiv paddingLeft">
-          <div class="col-lg-10">
-            <div class="input-group">
-              <input name="userInputForStemmer"
-                     type="text"
-                     name="inputField"
-                     class="form-control"
-                     aria-label="Input word or url that links to word list to be stemmed"
-                     ng-model="userInput"
-                     ng-change="resetValidFlag()"
-              >
-              <div class="input-group-btn">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stem Options<span class="caret"></span></button>
-                <ul class="dropdown-menu dropdown-menu-right">
-                  <li><button ng-click="validateURLInput(userInput)">Stem WordList</button></li>
-                  <li><button ng-click="validateWordInput(userInput)">Stem the Word</button></li>
-                </ul>
-              </div>
-            </div>
-            <div class="alert alert-danger animate bounce" ng-if="invalid">
-              <pre>{{errorText}}</pre>
-            </div>
+    <form class="">
+      <div class="centerDiv input-group">
+          <!-- <div class="input-group row"> -->
+            <input name="userURL"
+                   type="text"
+                   name="urlInput"
+                   class="form-control"
+                   aria-label="Input url that links to word list to be stemmed"
+                   ng-model="userURLInput"
+                   ng-change="resetValidFlag()"
+            >
+            <span class="input-group-btn"><button class="btn btn-primary" ng-click="validateURLInput(userURLInput)">Stem WordList</button></span>
+
+          <!-- </div> -->
+      </div>
+      <div class="centerDiv form-group row">
+        <div class="col-xs-8">
+          <div class="input-group">
+            <input name="userLookupWord"
+                   type="text"
+                   name="wordInput"
+                   class="form-control"
+                   aria-label="Input url that links to word list to be stemmed"
+                   ng-model="userWordInput"
+                   ng-change="resetValidFlag()"
+            >
+            <span class="input-group-btn"><button class="btn btn-primary" ng-click="validateWordInput(userWordInput)">Lookup Word</button></span>
           </div>
         </div>
-      </form>
-    </div>
+      </div>
+      <div class="alert alert-danger animate bounce" ng-if="invalid">
+        <pre>'{{errorText}}'</pre>
+      </div>
+  </form>
+</div>
 
   <div ui-view></div>
 

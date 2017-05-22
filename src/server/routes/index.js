@@ -1,12 +1,14 @@
 var express     = require('express'),
     path        = require('path'),
     configs     = require(path.resolve(__dirname, '../common/configs/globalConfigs')),
-    cleaner     = require(path.resolve(__dirname, '../common/util/stringUtil')),
+    utils       = require(path.resolve(__dirname, '../common/util/utils')),
+    // cleaner     = require(path.resolve(__dirname, '../common/util/stringUtil')),
     router      = express.Router(),
+    // urlCrawler  = utils.urlCrawler,
+    stemUtil    = utils.stemmer,
     ROOT_DIR    = configs.paths.ROOT_DIRECTORY,
     SINGLE_WORD = configs.consts.SINGLE_WORD,
     WORD_LIST   = configs.consts.WORD_LIST;
-
     // router.use(function(req, res, next) {
     //   console.log('Setting stuff');
     //     res.header("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -36,29 +38,13 @@ router.get('/', function(req, res, next) {
 // Call to stem algo
 router.get('/stemmer', function(req, res, next) {
   console.log('Stemming word(s) now!!');
-  // var type      = req.query.type,
-  //     userInput = cleaner.trim(req.query.userInput),
-  //     results   = [{}];
-  //
-  // // Client-side validation ensures proper format of word. BUT, in real env, there should be server-side validations for security purposes (i.e. in case JS is turned off in the browser)
-  // if (type === SINGLE_WORD){
-  //   results = stemmer.stemWord(userInput);
-  // }else if (type === WORD_LIST){
-  //   var wordList =
-  //   results = stemmer.stemWordList(userInput);
-  // }else{
-  //   // TODO: Implement unrecognized type error
-  // }
-  // res.send(results);
-  res.json({
-      'payload' : [{
-         word    : 'test',
-         stems   : ['stem1', 'stem2'],
-         affixes : ['affix1', 'affix2']
-      }],
-      'stemColSpan'  : 2,
-      'affixColSpan' : 2
-  });
+  var url        = req.query.userInput,
+      // wordList   = urlCrawler.getWordListFrom(url),
+      wordList   = ['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', '', null, undefined],
+      stemEngine = new stemUtil.StemEngine(wordList, 'en'),
+      results    = stemEngine.stemWordList();
+      console.log('RESULTS: ' + results);
+  res.json(results);
   // res.redirect('/#/stemWordResults');
 });
 

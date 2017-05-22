@@ -1,0 +1,47 @@
+prefixes will be Alphabetically stored
+  - they should only have one vowel each
+  - keep a flag to determine if a vowel has been detected in the vowel lookup
+need to create lookup map of possible suffixes as suffixes could be paired out of alphabetical order
+Infix - need to determine if stems are separated by some vowel (phrase?)
+  - Easy if we know how to break words up
+  - Breakup words by keeping track of stems found when breaking off prefixes/suffixes
+  - Keep track of root word
+  - Use regex to see if base word is in larger word?
+    - salesoforce
+      o f o r c e
+      e c r o f o (but create forward read string)
+      if the stem does not contain a vowel, it's not a word
+      may need to check suffixes
+        - perhaps check all suffixes in a set of words (based on alphabetical order
+
+
+// OLD CODE
+
+
+before scanning, check if ending matches anything in the dict
+at first, this approach may be a tad slow, but will speed up as you findmore matches, and dynamically build the dict
+scan ending
+  take the expr, check if any other word in the list endsWtih(expr)
+    if so, add it to the dict
+    if not, expand the search
+
+
+if (word.length > 3){ // Only care about words with 2 or more syllables, otherwise we assume the word passed is the root word
+  // Check for circumfix
+
+
+  var numOfSyllablesInWord = getNumberOfSyllables(word);
+  if (numOfSyllablesInWord > 3){ // All forms for our problem state a pattern of 3 except for a form with all stems, which can have n stems
+    deconstructedWordPayload.stems = breakUpWordBySyllable(word);
+    return deconstructedWordPayload;
+
+    // Infix - check if two syllables are joined by a single vowel or consonant. This is an infix? - Think about this
+
+    // Circumfix - check if first & last syllables are the same, if so this is a Circumfix setup
+    var context = {};
+    checkForPrefix(word);
+  }
+return deconstructedWordPayload;
+
+
+http://stackoverflow.com/questions/6682951/why-is-looping-through-an-array-so-much-faster-than-javascripts-native-indexof

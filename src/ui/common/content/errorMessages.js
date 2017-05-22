@@ -15,4 +15,16 @@ var errMessages = {
       "You did not enter any text!\n\
       - Please enter a word, or url, and choose the correct corresponding action\n\
       ",
+
+  WORD_DOES_NOT_EXIST :
+      "Sorry that word was not found in the lookup =/\n\
+      - Reasons why the word was not found:\n\
+        - It was not found in the list of words found at the URL provided\n\
+        - It was removed during the stemming process as it did not meet the intended criteria\n\
+      \n\
+      - Words that can be stemmed MUST:\n\
+        - Only cotain characters 'a'-'z' (inclusive)\n\
+        - Contain no white spaces\n\
+        - Be a singular word and not a phrase\n\
+      ",
 };
