@@ -185,10 +185,11 @@ module.exports.decomposeAndStem = function(wordList){
       word2        = '',
       hasPrefix    = false,
       wordsWithMultipleOrSingleStem = [];
-  wordList             = wordList.sort();
+
+  wordList = wordList.sort();
   var reversedWordList = wordList.map(checkForValidInputAndReverse);
-  reversedWordList     = reversedWordList.sort();
-  console.log(1);
+      reversedWordList = reversedWordList.sort();
+
   for (; currentIndex < listLength; currentIndex++){
     hasPrefix = false;
     hasSuffix = false;
@@ -256,7 +257,6 @@ module.exports.decomposeAndStem = function(wordList){
 
         analyzedWords[word1] = generateAnalyzedWordObj(word1, [stem], {'suffixes' : suffixCheckResults.suffixes,
                                                                        'prefix'   : prefixCheckResults.prefix});
-        console.log('ANALYZED WORDS : ' + analyzedWords);
     }else{
       var errorContentParams = {
             expectedType : 'String', //TODO: Move this error throwing logic to new module
