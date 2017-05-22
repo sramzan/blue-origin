@@ -20,8 +20,8 @@ function isValidInput(input){
 
 // end move
 
-var prefixDict   = {},
-    suffixDict   = {},
+var prefixDict    = {},
+    suffixDict    = {},
     analyzedWords = {}; // word : {word: word, stems : [], affixes : []}
 
 function circumfixAffixPatternCheck(word){
@@ -123,28 +123,32 @@ function generateAnalyzedWordObj(word, stems, affixes){
   return analyzedWordObj;
 }
 
-function buildPrefixesAndSuffixes(wordList){
-  wordList = wordList.sort();
-  var reversedWordList = wordList.map(function(str){
-    if(isValidInput(str)){
-      return reverseString(str);
-    }
-  });
-  reversedWordList = reversedWordList.sort();
+function checkForValidInputAndReverse(str){
+  if(isValidInput(str)){
+    return reverseString(str);
+  }
+}
+
+function decomposeAndStem(wordList){
   var currentIndex = 0,
       backIndex    = 0,
       listLength   = wordList.length,
       word1        = '',
       word2        = '',
       hasPrefix    = false;
+  wordList             = wordList.sort();
+  var reversedWordList = wordList.map(checkForValidInputAndReverse);
+  reversedWordList     = reversedWordList.sort();
 
   for (; currentIndex < listLength; currentIndex++){
     hasPrefix = false;
     hasSuffix = false;
     word1 = wordList[currentIndex];
     word2 = (currentIndex + 1) < listLength ? wordList[currentIndex+1] : ""; // Check for when word1 is the last word in the array
-
     if (isValidInput(word1)){
+      if (word1.length < 3){
+        analyzedWords[word1] = generateAnalyzedWordObj(word1, [word1], {});
+      }
       word1 = cleanUp(word1);
       word2 = isValidInput(word2) ? cleanUp(word2) : "";
       // Do not analye duplicate word
@@ -185,17 +189,15 @@ function buildPrefixesAndSuffixes(wordList){
 
         analyzedWords[word1] = generateAnalyzedWordObj(word1, [stem], {'suffixes' : suffixCheckResults.suffixes,
                                                                        'prefix'   : prefixCheckResults.prefix});
+    }else{
+      this.errorContentParam.expectedType = 'Number'; //TODO: Move this error throwing logic to new module
+      console.log(exceptionMessages.static.invalidWord + '\n' + // TODO: Change to throw when done testing
+                  exceptionMessages.dynamic.notExpectedType(errorContentParams));
     }
   }
 
   return analyzedWords;
-
-
 }
 
-console.log(JSON.stringify(buildPrefixesAndSuffixes(['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', '', null, undefined])));
-// console.log(buildPrefixesAndSuffixes(['apple', 'banana', 'aardvark', 'aardwolf', 'aaron', 'aback']));
-
-// module.exports = {
-//
-// };
+// Test Case - leaving one for an example
+// console.log(JSON.stringify(decomposeAndStem(['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', '', null, undefined])));

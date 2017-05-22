@@ -4,7 +4,8 @@ var express     = require('express'),
     utils       = require(path.resolve(__dirname, '../common/util/utils')),
     // cleaner     = require(path.resolve(__dirname, '../common/util/stringUtil')),
     router      = express.Router(),
-    stemUtil    = utils.stemmer;
+    urlCrawler  = utils.urlCrawler,
+    stemUtil    = utils.stemmer,
     ROOT_DIR    = configs.paths.ROOT_DIRECTORY,
     SINGLE_WORD = configs.consts.SINGLE_WORD,
     WORD_LIST   = configs.consts.WORD_LIST;
@@ -37,32 +38,11 @@ router.get('/', function(req, res, next) {
 // Call to stem algo
 router.get('/stemmer', function(req, res, next) {
   console.log('Stemming word(s) now!!');
-
-  // var type      = req.query.type,
-  //     userInput = cleaner.trim(req.query.userInput),
-  //     results   = [{}];
-  //
-  // // Client-side validation ensures proper format of word. BUT, in real env, there should be server-side validations for security purposes (i.e. in case JS is turned off in the browser)
-  // if (type === SINGLE_WORD){
-  //   results = stemmer.stemWord(userInput);
-  // }else if (type === WORD_LIST){
-  //   var wordList =
-  //   results = stemmer.stemWordList(userInput);
-  // }else{
-  //   // TODO: Implement unrecognized type error
-  // }
-  // res.send(results);
-  var stemEngine = new stemUtil.StemEngine(1,2);
-  stemEngine.stemWordList();
-  res.json({
-      'payload' : [{
-         word    : 'test',
-         stems   : ['stem1', 'stem2'],
-         affixes : ['affix1', 'affix2']
-      }],
-      'stemColSpan'  : 2,
-      'affixColSpan' : 2
-  });
+  var url        = req.query.userInput,
+      wordList   = urlCrawler.getWordListFrom(url),
+      stemEngine = new stemUtil.StemEngine(wordList, 'en');
+      results    = stemEngine.stemWordList();
+  res.json(results);
   // res.redirect('/#/stemWordResults');
 });
 

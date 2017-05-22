@@ -8,14 +8,6 @@ var path = require('path'),
 var LIB_DIR  = globalConfigs.paths.LIB_DIR;
     UTIL_DIR = globalConfigs.paths.UTIL_DIR;
 
-// // Custom Modules
-// var regexDict      = require(LIB_DIR + 'regexDict'),
-//     enExceptions   = require(LIB_DIR + 'enExceptions'),
-//     stemRuleMapper = require(LIB_DIR + 'stemRules');
-//
-// // Custom Stem Modules (in case of future language support)
-// var enStemRules = require(LIB_DIR + 'stemRules');
-
 // Export Configs
 module.exports = {
   modules : {

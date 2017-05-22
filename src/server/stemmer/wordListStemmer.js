@@ -36,21 +36,7 @@ stemEngine.prototype.test = function test(){
 };
 
 stemEngine.prototype.stemWordList = function(){
-  var index = 0,
-      word  = '';
-    for (; index < this.wordListLength; index++){
-      word = this.wordListLength[index];
-      if (isValidInput(word)){
-        if(word.length > 3){
-            // runRulesOn();
-        }
-      }else{
-        this.errorContentParam.expectedType = 'Number'; //TODO: Move this error throwing logic to new module
-        console.log(exceptionMessages.static.invalidWord + '\n' + // TODO: Change to throw when done testing
-                    exceptionMessages.dynamic.notExpectedType(errorContentParams));
-      }
-    }
+  return this.stemRules.decomposeAndStem(this.wordList); // This method must defined for all rule sets (it's the entry point)
 };
 
 module.exports.StemEngine = stemEngine;
-// module.exports.test = test
