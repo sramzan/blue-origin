@@ -109,6 +109,46 @@ function suffixPatternCheck(word1, word2, reversedWordList){
   return results;
 }
 
+function processRemainingWords(remainingWordList){
+  var index       = 0,
+      charIndex   = 0,
+      word1 = '',
+      currentSubstr = '',
+      expr2 = '',
+      listOfStems = [],
+      currentStem = '';
+
+  remainingWordList = remainingWordList.sort();
+
+  for(; index < remainingWordList.length; index++){
+    currentSubstr = '';
+    charIndex     = 0;
+    word1 = remainingWordList[index];
+    word2 = (index + 1) < remainingWordList.length ? remainingWordList[index+1] : '';
+    for (; charIndex < word1.length; charIndex++){
+      currentSubstr = currentSubstr + word1.charAt(charIndex);
+      // Compare the two words first, and then go to the dict. This is so that we don't miss out on new stems that may be embedded within one another
+      if (word2.includes(currentSubstr)){ // If the current expression is anywhere in the second word, it must be a stem, and we're going to store it
+        currentStem = currentSubstr;
+      }else{
+        if (currentStem !== ''){ // If something was found in the adjacent word, add it to the record books
+          listOfStems.push(currentStem);
+          currentSubstr = '';
+        }else if(stemDict.hasOwnProperty(currentSubstr)){ // If the adjacent word has nothing related to word1, we will look to our hand-dandy dict for answers
+          listOfStems.push(currentSubstr);
+          currentSubstr = '';
+        }
+      }
+    }
+    if (currentSubstr !== ''){ // There was a part of, or the entire word, that could not be matched
+      listOfStems.push(currentSubstr);
+      stemDict[currentSubstr] = true; // Add new stem found
+    }
+    analyzedWords[word1] = generateAnalyzedWordObj(word1, listOfStems, {'suffixes' : [],
+                                                                         'prefix'   : []});
+  }
+}
+
 function generateAnalyzedWordObj(word, stems, affixes){
   var typesOfAffixes = ['prefix', 'suffixes', 'circumfix', 'infix'],
       analyzedWordObj = {
@@ -143,7 +183,8 @@ module.exports.decomposeAndStem = function(wordList){
       listLength   = wordList.length,
       word1        = '',
       word2        = '',
-      hasPrefix    = false;
+      hasPrefix    = false,
+      wordsWithMultipleOrSingleStem = [];
   wordList             = wordList.sort();
   var reversedWordList = wordList.map(checkForValidInputAndReverse);
   reversedWordList     = reversedWordList.sort();
@@ -168,6 +209,9 @@ module.exports.decomposeAndStem = function(wordList){
       var infixPattern = infixPatternCheck(word1);
       if (infixPattern.matched){
         analyzedWords[word1] = generateAnalyzedWordObj(word1, infixPattern.stems, infixPattern.affixes);
+        for (var index = 0; index < infixPattern.stems.length; index++){
+          stemDict[infixPattern.stems[index]] = true; // Add all found stems to the lookup dict
+        }
         continue;
       }
 
@@ -175,6 +219,7 @@ module.exports.decomposeAndStem = function(wordList){
       var circumfixPattern = circumfixAffixPatternCheck(word1);
       if (circumfixPattern.matched){
         analyzedWords[word1] = generateAnalyzedWordObj(word1, circumfixPattern.stems, circumfixPattern.affixes);
+        stemDict[circumfixPattern.stems[0]] = true;
         continue;
       }
 
@@ -203,9 +248,11 @@ module.exports.decomposeAndStem = function(wordList){
       }
 
       // No Prefix, Suffix, or Circumfix found, so store the stem & the word
-      // if (commonUtil.areEqual(stem, word1)){
-      //
-      // }
+      if (commonUtil.areEqual(stem, word1)){
+        wordsWithMultipleOrSingleStem.push(word1);
+      }else{
+        stemDict[stem] = true;
+      }
 
         analyzedWords[word1] = generateAnalyzedWordObj(word1, [stem], {'suffixes' : suffixCheckResults.suffixes,
                                                                        'prefix'   : prefixCheckResults.prefix});
@@ -221,6 +268,8 @@ module.exports.decomposeAndStem = function(wordList){
                   exceptionMessages.dynamic.notExpectedType(errorContentParams));
     }
   }
+
+  processRemainingWords(wordsWithMultipleOrSingleStem);
 
   return analyzedWords;
 };

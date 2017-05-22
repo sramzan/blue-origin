@@ -54,7 +54,7 @@ stemEngine.prototype.stemWordList = function(){
 
 module.exports.StemEngine = stemEngine;
 
-wordList   = ['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', 'hey-there', 'oh-no-ye', '', null, undefined],
+wordList   = ['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', 'hey-there', 'oh-no-ye', 'seanp', 'zoomanh', 'szoop', '', null, undefined],
 stemEngine = new stemEngine(wordList, 'en');
 results    = stemEngine.stemWordList();
 console.log(JSON.stringify(results));
