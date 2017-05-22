@@ -1,4 +1,7 @@
 /*
+
+TODO: Delete
+
   function will return:
     { word : {
         'stem'    : arr[stems],
@@ -90,8 +93,6 @@ function getNumberOfSyllables(word){
   var numVowels = getNumVowels(word);
 
 }
-
-function isCircumfix
 
 exports.stemWord = function(wordList){
 

@@ -15,6 +15,8 @@
         console.log('Word: ' + word);
         if($scope.wordList.hasOwnProperty(word)){
           $scope.resultsToDisplay = [$scope.wordList[word]];
+          $scope.stemColSpan      = $scope.resultsToDisplay[0].stems.length;
+          console.log('$scope.stemColSpan  :' + $scope.stemColSpan  );
           console.log('resultsToDisplay: ' + JSON.stringify($scope.resultsToDisplay));
           $scope.wordExists       = true;
           $scope.showError        = false;

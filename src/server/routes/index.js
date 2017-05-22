@@ -40,7 +40,7 @@ router.get('/stemmer', function(req, res, next) {
   console.log('Stemming word(s) now!!');
   var url        = req.query.userInput,
       // wordList   = urlCrawler.getWordListFrom(url),
-      wordList   = ['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', '', null, undefined],
+      wordList   = ['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', 'hey-there', 'oh-no-yes', '', null, undefined],
       stemEngine = new stemUtil.StemEngine(wordList, 'en'),
       results    = stemEngine.stemWordList();
       console.log('RESULTS: ' + results);

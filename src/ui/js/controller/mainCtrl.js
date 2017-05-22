@@ -40,7 +40,7 @@
       };
       $scope.resetValidFlag     = function(){ $scope.invalid = false; };
       $scope.validateWordInput  = function(input, type){ // Could make the two validations one function, but this is easier to read & follows one action per function a tad more closely
-        if(typeof input === 'string' && errValidator.containsInvalidInput(input, 'anyNonLetterCharsPattern')){ // return false if it contains the illegal chars
+        if((typeof input !== 'string') || errValidator.containsInvalidInput(input, 'anyNonLetterCharsPattern')){ // return false if it contains the illegal chars
           showErrorMessage($scope, errMessages.INVALID_SINGLE_WORD_INPUT);
         }else{
           var deregister = $rootScope.$broadcast('wordLookupRequested', {'word' : input.toLowerCase()});

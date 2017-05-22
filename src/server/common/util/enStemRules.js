@@ -1,33 +1,39 @@
-function reverseString(str){ // TODO: Move these to a util
-  return str.split('').reverse().join('');
-}
-
-function areEqual(str1, str2){
-  return str1 === str2;
-}
-
-function cleanUp(input){
-  return input.trim().toLowerCase();
-}
-//
-// function containSpace(input){
-//   return
-// }
-
-function isValidInput(input){
-  return input !== null && input !== undefined && input.trim() !== ''; //&& !containsSpace(input);
-}
-
-// end move
-
 var path              = require('path'),
     globalConfigs     = require(path.resolve(__dirname, '../configs/globalConfigs')),
     exceptionMessages = globalConfigs.content.exceptionContent,
+    regexDict        = globalConfigs.dict.regexDict,
+    commonUtil        = new globalConfigs.modules.validations.Validations(),
     prefixDict        = {},
     suffixDict        = {},
-    analyzedWords     = {}; // word : {word: word, stems : [], affixes : []}
+    stemDict          = {},
+    analyzedWords     = {}, // word : {word: word, stems : [], affixes : []}
+    INFIX             = 'infix',
+    SUFFIXES          = 'suffixes',
+    PREFIX            = 'prefix',
+    CIRCUMFIX         = 'circumfix';
 
-function circumfixAffixPatternCheck(word){
+function setResultsObjToMatched(results, stems, affixes, affixType){ // TODO: Refactor logic to call this, and reduce some of the redudant logic below
+  results.matched            = true;
+  results.stems              = stems;
+  results.affixes[affixType] = affixes;
+}
+
+function infixPatternCheck(word){
+  var results = {
+        'matched' : false,
+        'affixes' : {},
+        'stems'   : []
+      },
+      singleDashPattern = new RegExp(regexDict.lookup('singleDash'));
+
+  if (singleDashPattern.test(word)){
+    setResultsObjToMatched(results, word.split('-'), ['-'], INFIX);
+  }
+  return results;
+}
+
+
+function circumfixAffixPatternCheck(word){ // TODO: Align results obj to the uniform return of the other patterns
   var frontIndex      = 0,
       backIndex       = word.length - 1,
       frontExpression = '',
@@ -40,10 +46,10 @@ function circumfixAffixPatternCheck(word){
   for (; frontIndex <= backIndex; frontIndex++,backIndex-- ){
     frontExpression = frontExpression + word.charAt(frontIndex);
     backExpression  = backExpression  + word.charAt(backIndex);
-    if(areEqual(frontExpression, reverseString(backExpression))){
+    if(commonUtil.areEqual(frontExpression, commonUtil.reverseString(backExpression))){
         if ((frontIndex < backIndex) && ((frontIndex + 1) !== backIndex)){
         results.matched = true;
-        results.affixes = {'circumfix' : [word.substring(0, frontIndex+1)]}; // TODO: Make circumfix a global config
+        results.affixes = {CIRCUMFIX : [word.substring(0, frontIndex+1)]}; // TODO: Make circumfix a global config
         results.stems   = [word.substring(frontIndex+1, backIndex)];
       }
     }
@@ -56,13 +62,13 @@ function checkIfPatternExists(word1, word2, dict, type){
       expr2 = '',
       currentCharIndex = 0,
       results = { 'matched' : false, };
-  results[type] = [];
+      results[type] = [];
 
   for (; currentCharIndex < word1.length; currentCharIndex++){
     expr1 = expr1 + word1.charAt(currentCharIndex);
     expr2 = expr2 + word2.charAt(currentCharIndex);
-    if (dict.hasOwnProperty(expr1) || areEqual(expr1, expr2)){ // Check if the prefix has already been found
-      results[type] = (type === 'suffixes') ? [reverseString(expr1)] : [expr1];
+    if (dict.hasOwnProperty(expr1) || commonUtil.areEqual(expr1, expr2)){ // Check if the prefix has already been found
+      results[type] = (type === SUFFIXES) ? [commonUtil.reverseString(expr1)] : [expr1];
       if (!dict.hasOwnProperty(expr1)){ // If new prefix found, add it to the dict
           dict[expr1] = true;
       }
@@ -76,7 +82,7 @@ function checkIfPatternExists(word1, word2, dict, type){
 }
 
 function prefixPatternCheck(word1, word2){
-  var results = checkIfPatternExists(word1, word2, prefixDict, 'prefix');
+  var results = checkIfPatternExists(word1, word2, prefixDict, PREFIX);
 
   if(results.prefix && results.prefix.length > 0){
     results.matched = true;
@@ -86,15 +92,15 @@ function prefixPatternCheck(word1, word2){
 
 function suffixPatternCheck(word1, word2, reversedWordList){
   var listLength           = reversedWordList.length,
-      reversedWord1        = reverseString(word1),
+      reversedWord1        = commonUtil.reverseString(word1),
       indexOfReversedWord2 = reversedWordList.indexOf(reversedWord1) + 1;
       reversedWord2        = indexOfReversedWord2 < listLength ? reversedWordList[indexOfReversedWord2] : '',
       results              = {};
 
-  if (isValidInput(reversedWord1)){
-    reversedWord1 = cleanUp(reversedWord1);
-    reversedWord2 = isValidInput(reversedWord2) ? cleanUp(reversedWord2) : '';
-    results = checkIfPatternExists(reversedWord1, reversedWord2, suffixDict, 'suffixes');
+  if (commonUtil.isValidInput(reversedWord1)){
+    reversedWord1 = commonUtil.cleanUp(reversedWord1);
+    reversedWord2 = commonUtil.isValidInput(reversedWord2) ? commonUtil.cleanUp(reversedWord2) : '';
+    results = checkIfPatternExists(reversedWord1, reversedWord2, suffixDict, SUFFIXES);
   }
 
   if(results.suffixes && results.suffixes.length > 0){
@@ -102,7 +108,6 @@ function suffixPatternCheck(word1, word2, reversedWordList){
   }
   return results;
 }
-
 
 function generateAnalyzedWordObj(word, stems, affixes){
   var typesOfAffixes = ['prefix', 'suffixes', 'circumfix', 'infix'],
@@ -127,8 +132,8 @@ function generateAnalyzedWordObj(word, stems, affixes){
 }
 
 function checkForValidInputAndReverse(str){
-  if(isValidInput(str)){
-    return reverseString(str);
+  if(commonUtil.isValidInput(str)){
+    return commonUtil.reverseString(str);
   }
 }
 
@@ -148,14 +153,21 @@ module.exports.decomposeAndStem = function(wordList){
     hasSuffix = false;
     word1 = wordList[currentIndex];
     word2 = (currentIndex + 1) < listLength ? wordList[currentIndex+1] : ""; // Check for when word1 is the last word in the array
-    if (isValidInput(word1)){
+    if (commonUtil.isValidInput(word1) && !word1.match(regexDict.lookup('multipleDashes'))){
       if (word1.length < 3){
         analyzedWords[word1] = generateAnalyzedWordObj(word1, [word1], {});
       }
-      word1 = cleanUp(word1);
-      word2 = isValidInput(word2) ? cleanUp(word2) : "";
+      word1 = commonUtil.cleanUp(word1);
+      word2 = commonUtil.isValidInput(word2) ? commonUtil.cleanUp(word2) : "";
+
       // Do not analye duplicate word
       if (analyzedWords.hasOwnProperty(word1)){
+        continue;
+      }
+
+      var infixPattern = infixPatternCheck(word1);
+      if (infixPattern.matched){
+        analyzedWords[word1] = generateAnalyzedWordObj(word1, infixPattern.stems, infixPattern.affixes);
         continue;
       }
 
@@ -190,6 +202,11 @@ module.exports.decomposeAndStem = function(wordList){
         stem = stem.substring(0, (stem.length - suffixCheckResults.suffixes[0].length));
       }
 
+      // No Prefix, Suffix, or Circumfix found, so store the stem & the word
+      // if (commonUtil.areEqual(stem, word1)){
+      //
+      // }
+
         analyzedWords[word1] = generateAnalyzedWordObj(word1, [stem], {'suffixes' : suffixCheckResults.suffixes,
                                                                        'prefix'   : prefixCheckResults.prefix});
         console.log('ANALYZED WORDS : ' + analyzedWords);
@@ -206,7 +223,7 @@ module.exports.decomposeAndStem = function(wordList){
   }
 
   return analyzedWords;
-}
+};
 
 // Test Case - leaving one for an example
 // console.log(JSON.stringify(decomposeAndStem(['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', '', null, undefined])));

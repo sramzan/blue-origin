@@ -3,10 +3,10 @@
 */
 
 function ErrValidator(){
-  
+
   // Common Regex Patterns
   var commonRegexPatterns = {
-        'anyNonLetterCharsPattern' : "(\\d)|(\\W+)|(_)", // catches digits, non alphanumeric chars, underscores
+        'anyNonLetterCharsPattern' : "(\\d)|(\\W+-)|(_)", // catches digits, non alphanumeric chars, underscores
         'urlFormatPattern'         : ""                  // catches forms that do not align to 'http://url'
   }
 
