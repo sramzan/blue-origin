@@ -14,26 +14,25 @@
   <!-- Heading -->
   <div id="headerText" class="centerDiv">
     <h1 class="alignTextCenter">Let's get stemming!</h1>
-    <h3 class="alignTextCenter">Please enter a URL or word below</h3>
+    <h3 class="alignTextCenter">Please enter a URL below to a list of words</h3>
   </div>
   <!-- Static Action Form -->
   <div ng-controller='mainCtrl'>
-    <form class="">
-      <div class="centerDiv input-group">
-          <!-- <div class="input-group row"> -->
-            <input name="userURL"
-                   type="text"
-                   name="urlInput"
-                   class="form-control"
-                   aria-label="Input url that links to word list to be stemmed"
-                   ng-model="userURLInput"
-                   ng-change="resetValidFlag()"
-            >
-            <span class="input-group-btn"><button class="btn btn-primary" ng-click="validateURLInput(userURLInput)">Stem WordList</button></span>
-
-          <!-- </div> -->
+    <form id="headerForm" class="form-inline centerDiv paddingLeft">
+      <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="delim" aria-label="Input optional delim here that will divide up the word list" ng-model="delim" placeholder="Optional Delim">
+      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+        <input name="userURL"
+               placeholder="Enter URL"
+               type="text"
+               name="urlInput"
+               class="form-control"
+               aria-label="Input url that links to word list to be stemmed"
+               ng-model="userURLInput"
+               ng-change="resetValidFlag()"
+        >
+        <span class="input-group-btn"><button class="btn btn-primary" ng-click="validateURLInput(userURLInput, delim)">Stem WordList</button></span>
       </div>
-      <div class="centerDiv form-group row">
+      <div id="userLookupWordInput" class="centerDiv form-group row">
         <div class="col-xs-8">
           <div class="input-group">
             <input name="userLookupWord"
@@ -48,10 +47,10 @@
           </div>
         </div>
       </div>
-      <div class="alert alert-danger animate bounce" ng-if="invalid">
-        <pre>'{{errorText}}'</pre>
-      </div>
   </form>
+  <div id="mainErroMess" class="centerDiv alert alert-danger animate bounce" ng-if="invalid">
+    <pre>{{errorText}}</pre>
+  </div>
 </div>
 
   <div ui-view></div>
@@ -68,7 +67,6 @@
   <!-- Util Scripts -->
   <script type="text/javascript" src="main.js"></script>
   <script type="text/javascript" src="validator/inputValidator.js"></script>
-  <script type="text/javascript" src="util/cors.js"></script>
   <script type="text/javascript" src="controller/mainCtrl.js"></script>
   <script type="text/javascript" src="controller/stemWord.js"></script>
 </body>

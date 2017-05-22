@@ -1,6 +1,7 @@
 // Definining modules to be used
 var express      = require('express'),
     path         = require('path'),
+    cors        = require('cors'),
     favicon      = require('serve-favicon'),
     logger       = require('morgan'),
     cookieParser = require('cookie-parser'),
@@ -12,6 +13,7 @@ var index = require('./server/routes/index'),
 
 // Defining the express app
 var app = express();
+app.use(cors());
 
 // app.all('/', function(req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "*");

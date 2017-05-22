@@ -5,22 +5,22 @@
   <table class="table table-hover table-bordered">
     <thead>
       <tr>
-        <td>Word</td>
+        <td colspan=1>Word</td>
         <td colspan="{{stemColSpan}}">Stem(s)</td>
-        <td colspan="{{affixColSpan}}">Affix(es)</td>
+        <td>Affix(es)</td>
       </tr>
     </thead>
 
     <tbody ng-if="wordExists">
       <tr ng-repeat="wordObj in resultsToDisplay">
         <td>{{wordObj.word}}</td>
-        <td ng-repeat="stem in wordObj.stems">
+        <td colspan="wordObj.stems.length" ng-repeat="stem in wordObj.stems">
           {{stem}}
         </td>
-        <td colspan="wordObj.affixes.prefix.length" ng-repeat="prefix in wordObj.affixes.prefix">
+        <td colspan="wordObj.affixes.prefix.length" ng-repeat="prefix in wordObj.affixes.prefix" ng-if="wordObj.affixes.prefix.length > 0">
           Prefix: {{prefix}}
         </td>
-        <td colspan="wordObj.affixes.suffixes.length" ng-repeat="suffix in wordObj.affixes.suffixes" ng-if="wordObj.affixes.prefix.length > 0">
+        <td colspan="wordObj.affixes.suffixes.length" ng-repeat="suffix in wordObj.affixes.suffixes" ng-if="wordObj.affixes.suffixes.length > 0">
           Suffixes: {{suffix}}
         </td>
         <td colspan="wordObj.affixes.circumfix.length" ng-repeat="circumfix in wordObj.affixes.circumfix" ng-if="wordObj.affixes.circumfix.length > 0">

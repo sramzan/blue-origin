@@ -5,7 +5,9 @@ var regexExpressions = {
   consonants : /[^aeiou]/gi,
   vowel      : "[aeiouy]",
   consonant  : "[^aeiou]",
-  anySpace   : /\s/gi
+  anySpace   : /\s/gi,
+  multipleDashes : /(-.*){2,}/gi,
+  singleDash : "[-]"
 };
 
 module.exports.lookup = function(key){

@@ -27,4 +27,6 @@ var errMessages = {
         - Contain no white spaces\n\
         - Be a singular word and not a phrase\n\
       ",
+  NO_WORD_LIST_YET :
+    "You must enter a URL that has an available word list first, in order to lookup a word"
 };
