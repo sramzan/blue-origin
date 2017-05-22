@@ -20,9 +20,12 @@ function isValidInput(input){
 
 // end move
 
-var prefixDict    = {},
-    suffixDict    = {},
-    analyzedWords = {}; // word : {word: word, stems : [], affixes : []}
+var path              = require('path'),
+    globalConfigs     = require(path.resolve(__dirname, '../configs/globalConfigs')),
+    exceptionMessages = globalConfigs.content.exceptionContent,
+    prefixDict        = {},
+    suffixDict        = {},
+    analyzedWords     = {}; // word : {word: word, stems : [], affixes : []}
 
 function circumfixAffixPatternCheck(word){
   var frontIndex      = 0,
@@ -129,7 +132,7 @@ function checkForValidInputAndReverse(str){
   }
 }
 
-function decomposeAndStem(wordList){
+module.exports.decomposeAndStem = function(wordList){
   var currentIndex = 0,
       backIndex    = 0,
       listLength   = wordList.length,
@@ -139,7 +142,7 @@ function decomposeAndStem(wordList){
   wordList             = wordList.sort();
   var reversedWordList = wordList.map(checkForValidInputAndReverse);
   reversedWordList     = reversedWordList.sort();
-
+  console.log(1);
   for (; currentIndex < listLength; currentIndex++){
     hasPrefix = false;
     hasSuffix = false;
@@ -189,8 +192,14 @@ function decomposeAndStem(wordList){
 
         analyzedWords[word1] = generateAnalyzedWordObj(word1, [stem], {'suffixes' : suffixCheckResults.suffixes,
                                                                        'prefix'   : prefixCheckResults.prefix});
+        console.log('ANALYZED WORDS : ' + analyzedWords);
     }else{
-      this.errorContentParam.expectedType = 'Number'; //TODO: Move this error throwing logic to new module
+      var errorContentParams = {
+            expectedType : 'String', //TODO: Move this error throwing logic to new module
+            name         : 'word1',
+            type         : typeof word1,
+            value        : word1
+      };
       console.log(exceptionMessages.static.invalidWord + '\n' + // TODO: Change to throw when done testing
                   exceptionMessages.dynamic.notExpectedType(errorContentParams));
     }

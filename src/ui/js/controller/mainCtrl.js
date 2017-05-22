@@ -10,7 +10,7 @@
       // })
     }
 
-    app.controller('mainCtrl', ['$scope', '$http', '$state', function($scope, $http, $state) {
+    app.controller('mainCtrl', ['$scope', '$http', '$state', '$rootScope', function($scope, $http, $state, $rootScope) {
       // Local Methods
       function showErrorMessage($scope, errMess){ // TODO - move to validator engine
         $scope.invalid   = true; //display error
@@ -35,14 +35,16 @@
 
       // Scope Level Methods/Attributes
       $scope.invalid = false;
+      $scope.changeState = function(hash, paramObj){
+        $state.go(hash, {'results' : paramObj}, {reload : true});
+      };
       $scope.resetValidFlag     = function(){ $scope.invalid = false; };
-      $scope.changeState        = function(hash, paramObj){
-        $state.go(hash, {'results' : paramObj}, {reload : true}); console.log('CALLER: ' + paramObj); };
       $scope.validateWordInput  = function(input, type){ // Could make the two validations one function, but this is easier to read & follows one action per function a tad more closely
-        if(errValidator.containsInvalidInput(input, 'anyNonLetterCharsPattern')){ // return false if it contains the illegal chars
+        if(typeof input === 'string' && errValidator.containsInvalidInput(input, 'anyNonLetterCharsPattern')){ // return false if it contains the illegal chars
           showErrorMessage($scope, errMessages.INVALID_SINGLE_WORD_INPUT);
         }else{
-          stem('singleWord', input);
+          var deregister = $rootScope.$broadcast('wordLookupRequested', {'word' : input.toLowerCase()});
+          $scope.$on('$destroy', deregister);
         }
       };
       $scope.validateURLInput = function(input){

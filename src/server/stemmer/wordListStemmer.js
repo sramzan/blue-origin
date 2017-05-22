@@ -4,29 +4,41 @@ var path              = require('path'),
     stemmerConfigs    = require(path.resolve(__dirname, '../common/configs/stemmerConfigs')),
     regexDict         = stemmerConfigs.modules.regexDict,
     enExceptions      = stemmerConfigs.modules.enExceptions,
-    stemRules         = stemmerConfigs.modules.stemRuleMapper,
+    stemRuleMapper    = stemmerConfigs.languageStemRules,
     exceptionMessages = globalConfigs.content.exceptionContent;
 
 var stemEngine = function StemEngine(wordList, language){
-  this.errorContentParams = {'name' : 'wordList',
-                             'type' : typeof this.wordList,
-                             'expectedType' : null};
-
   if(!Array.isArray(wordList)){
-    throwConstructorError(this.errorContentParams);
+    throwConstructorError(wordList, 'wordList', 'Array', 'invalidWordListInput');
+  }
+
+  if (!(typeof language === 'string')){
+    throwConstructorError(language, 'language', 'string', 'invalidLanguage');
   }
 
   this.wordList           = wordList;
   this.wordListLength     = wordList.length;
   this.invalidWordsInList = [];
-  // this.stemRules      = stemRuleMapper.lookup(language); // TODO - Move logic to here to allow for future languages
+  this.stemRules          = stemRuleMapper[language];
 };
 
-function throwConstructorError(errorContentParams){
-  errorContentParams.expectedType = 'Array';
-  console.log(exceptionMessages.static.invalidWordListInput + '\n' + // TODO: Change to throw when done testing
-              exceptionMessages.dynamic.notExpectedType(errorContentParams));
+function throwConstructorError(param, paramName, expectedType, staticLabel){ // TODO: Move this to error module
+  errorContentParams = {'name'         : paramName,
+                        'type'         : typeof language,
+                        'value'        : param,
+                        'expectedType' : expectedType
+                       };
+  var message = exceptionMessages.static[staticLabel] + '\n' +
+                exceptionMessages.dynamic.notExpectedType(errorContentParams);
+  console.log(message);
+  throw new stemEngineError(message);
 }
+
+function stemEngineError(message){
+  this.name    = "StemEngine Exception";
+  this.message = message;
+}
+
 function isValidInput(input){
   return input !== null && input !== undefined;
 }
@@ -36,7 +48,13 @@ stemEngine.prototype.test = function test(){
 };
 
 stemEngine.prototype.stemWordList = function(){
+  console.log("Stemming List from Algo");
   return this.stemRules.decomposeAndStem(this.wordList); // This method must defined for all rule sets (it's the entry point)
 };
 
 module.exports.StemEngine = stemEngine;
+
+// wordList   = ['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', '', null, undefined],
+// stemEngine = new stemEngine(wordList, 'en');
+// results    = stemEngine.stemWordList();
+// console.log(results);

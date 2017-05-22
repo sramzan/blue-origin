@@ -13,9 +13,9 @@ module.exports = {
   modules : {
     'regexDict'      : require(LIB_DIR + 'regexDict'),
     'enExceptions'   : require(LIB_DIR + 'enExceptions'),
-    'stemRuleMapper' : require(LIB_DIR + 'stemRules')
+    // 'stemRuleMapper' : require(LIB_DIR + 'stemRules')
   },
-  stemRuleModules : {
-    'enStemRules'    : require(LIB_DIR + 'stemRules')
+  languageStemRules : {
+    'en' : require(UTIL_DIR + 'enStemRules')
   }
 };

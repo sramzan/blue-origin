@@ -4,7 +4,7 @@ var express     = require('express'),
     utils       = require(path.resolve(__dirname, '../common/util/utils')),
     // cleaner     = require(path.resolve(__dirname, '../common/util/stringUtil')),
     router      = express.Router(),
-    urlCrawler  = utils.urlCrawler,
+    // urlCrawler  = utils.urlCrawler,
     stemUtil    = utils.stemmer,
     ROOT_DIR    = configs.paths.ROOT_DIRECTORY,
     SINGLE_WORD = configs.consts.SINGLE_WORD,
@@ -39,9 +39,11 @@ router.get('/', function(req, res, next) {
 router.get('/stemmer', function(req, res, next) {
   console.log('Stemming word(s) now!!');
   var url        = req.query.userInput,
-      wordList   = urlCrawler.getWordListFrom(url),
-      stemEngine = new stemUtil.StemEngine(wordList, 'en');
+      // wordList   = urlCrawler.getWordListFrom(url),
+      wordList   = ['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', '', null, undefined],
+      stemEngine = new stemUtil.StemEngine(wordList, 'en'),
       results    = stemEngine.stemWordList();
+      console.log('RESULTS: ' + results);
   res.json(results);
   // res.redirect('/#/stemWordResults');
 });

@@ -1,4 +1,3 @@
-
 <div class="panel panel-primary filterable" id="stemmerResultsDisplay">
   <div class="panel-heading">
     <h3 class="panel-title">Stem Results</h3>
@@ -11,18 +10,26 @@
         <td colspan="{{affixColSpan}}">Affix(es)</td>
       </tr>
     </thead>
-    <tbody>
-      <tr ng-repeat="wordObj in wordList">
+
+    <tbody ng-if="wordExists">
+      <tr ng-repeat="wordObj in resultsToDisplay">
         <td>{{wordObj.word}}</td>
         <td ng-repeat="stem in wordObj.stems">
           {{stem}}
         </td>
-        <td colspan="wordObj.affixes.length" ng-repeat="affix in wordObj.affixes">
-          {{affix}}
+        <td colspan="wordObj.affixes.prefix.length" ng-repeat="prefix in wordObj.affixes.prefix">
+          Prefix: {{prefix}}
         </td>
-
+        <td colspan="wordObj.affixes.suffixes.length" ng-repeat="suffix in wordObj.affixes.suffixes" ng-if="wordObj.affixes.prefix.length > 0">
+          Suffixes: {{suffix}}
+        </td>
+        <td colspan="wordObj.affixes.circumfix.length" ng-repeat="circumfix in wordObj.affixes.circumfix" ng-if="wordObj.affixes.circumfix.length > 0">
+          Circumfix:{{circumfix}}
+        </td>
       </tr>
     </tbody>
-
   </table>
+  <div class="alert alert-danger animate bounce" ng-if="showError">
+    <pre>{{errorText}}</pre>
+  </div>
 </div>
