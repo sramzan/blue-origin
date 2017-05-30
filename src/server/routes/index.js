@@ -27,13 +27,13 @@ router.get('/stemmer', function(req, res, next) {
   if(delim === null || delim === undefined || delim !== ',' || delim !== ' '){ // REALLY dislike this sort of check. Refactor if time permits
     delim = os.EOL;
   }
-  var wordListRequest = request(url, function(error, response, body){
+  // var wordListRequest = request(url, function(error, response, body){
         console.log('Word List acquired');
-        var wordList   = body.split(delim),
+        var wordList   = ['face', 'preface', 'lift', 'facelift', 'facing', 'lifting'], //body.split(delim),
             stemEngine = new stemUtil.StemEngine(wordList, 'en'),
             results    = stemEngine.stemWordList();
         res.json(results);
-      });
+      // });
   // wordList   = ['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', 'hey-there', 'oh-no-yes', '', null, undefined],
   // res.redirect('/#/stemWordResults');
 });
