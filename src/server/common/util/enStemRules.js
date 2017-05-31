@@ -7,6 +7,9 @@ var path              = require('path'),
     suffixDict        = {},
     stemDict          = {},
     analyzedWords     = {}, // word : {word: word, stems : [], affixes : []}
+    exploredWords     = {},
+    wordWeb           = {},
+    wordCount         = {},
     INFIX             = 'infix',
     SUFFIXES          = 'suffixes',
     PREFIX            = 'prefix',
@@ -177,99 +180,47 @@ function checkForValidInputAndReverse(str){
   }
 }
 
+function checkIfWordIsPartOfAnotherWord(wordBeingSearch, wordList, start){
+  var index       = 0,
+      currentWord = '',
+      matchFound  = false;
+
+  if (!wordWeb.hasOwnProperty(wordBeingSearch)){
+    wordWeb[wordBeingSearch] = [];
+  }
+
+  for(; index < wordList.length; index++){
+    currentWord = wordList[index];
+    if (currentWord.includes(wordBeingSearch) && currentWord !== wordBeingSearch){
+      if (wordWeb.hasOwnProperty(currentWord)){
+        wordWeb[currentWord].forEach(function(complexWord){
+          wordWeb[wordBeingSearch].push(complexWord);
+        });
+        delete wordWeb[currentWord];
+    }
+      wordWeb[wordBeingSearch].push(currentWord);
+      wordCount[currentWord] = ++wordCount[currentWord] || 1; // Either it's the first time the word has matched something, or it has matched words before
+      // TODO - Might want to store metadata associated with repeat seen word here
+      matchFound = true;
+    }
+  }
+  return matchFound;
+}
+
 module.exports.decomposeAndStem = function(wordList){
   var currentIndex = 0,
       backIndex    = 0,
       listLength   = wordList.length,
-      word1        = '',
+      currentWord  = '',
       word2        = '',
       hasPrefix    = false,
       wordsWithMultipleOrSingleStem = [];
 
-  wordList = wordList.sort();
-  var reversedWordList = wordList.map(checkForValidInputAndReverse);
-      reversedWordList = reversedWordList.sort();
-
-  for (; currentIndex < listLength; currentIndex++){
-    hasPrefix = false;
-    hasSuffix = false;
-    word1 = wordList[currentIndex];
-    word2 = (currentIndex + 1) < listLength ? wordList[currentIndex+1] : ""; // Check for when word1 is the last word in the array
-    if (commonUtil.isValidInput(word1) && !word1.match(regexDict.lookup('multipleDashes'))){
-      if (word1.length < 3){
-        analyzedWords[word1] = generateAnalyzedWordObj(word1, [word1], {});
-      }
-      word1 = commonUtil.cleanUp(word1);
-      word2 = commonUtil.isValidInput(word2) ? commonUtil.cleanUp(word2) : "";
-
-      // Do not analye duplicate word
-      if (analyzedWords.hasOwnProperty(word1)){
-        continue;
-      }
-
-      var infixPattern = infixPatternCheck(word1);
-      if (infixPattern.matched){
-        analyzedWords[word1] = generateAnalyzedWordObj(word1, infixPattern.stems, infixPattern.affixes);
-        for (var index = 0; index < infixPattern.stems.length; index++){
-          stemDict[infixPattern.stems[index]] = true; // Add all found stems to the lookup dict
-        }
-        continue;
-      }
-
-      // Check for circumfix pattern
-      var circumfixPattern = circumfixAffixPatternCheck(word1);
-      if (circumfixPattern.matched){
-        analyzedWords[word1] = generateAnalyzedWordObj(word1, circumfixPattern.stems, circumfixPattern.affixes);
-        stemDict[circumfixPattern.stems[0]] = true;
-        continue;
-      }
-
-      // Prefix check
-      var prefixCheckResults = prefixPatternCheck(word1, word2);
-      if (prefixCheckResults.matched){
-        hasPrefix = true;
-      }
-
-      // Suffix Check
-      var suffixCheckResults = suffixPatternCheck(word1, word2, reversedWordList);
-      if (suffixCheckResults.matched){
-        hasSuffix = true;
-      }
-
-      // Get stems based on prefix & suffix check
-      var stem = word1;
-      if (hasPrefix){
-        stem = stem.replace(prefixCheckResults.prefix[0], '');
-        // stem = stem.substring(stem.length - prefixCheckResults.prefix.length);
-      }
-
-      if (hasSuffix){
-        // stem = word1.replace(currentSuffix.suffix[0], '');
-        stem = stem.substring(0, (stem.length - suffixCheckResults.suffixes[0].length));
-      }
-
-      // No Prefix, Suffix, or Circumfix found, so store the stem & the word
-      if (commonUtil.areEqual(stem, word1)){
-        wordsWithMultipleOrSingleStem.push(word1);
-      }else{
-        stemDict[stem] = true;
-      }
-
-        analyzedWords[word1] = generateAnalyzedWordObj(word1, [stem], {'suffixes' : suffixCheckResults.suffixes,
-                                                                       'prefix'   : prefixCheckResults.prefix});
-    }else{
-      var errorContentParams = {
-            expectedType : 'String', //TODO: Move this error throwing logic to new module
-            name         : 'word1',
-            type         : typeof word1,
-            value        : word1
-      };
-      console.log(exceptionMessages.static.invalidWord + '\n' + // TODO: Change to throw when done testing
-                  exceptionMessages.dynamic.notExpectedType(errorContentParams));
-    }
+  for(; currentIndex < listLength; currentIndex++){
+    currentWord = wordList[currentIndex];
+    checkIfWordIsPartOfAnotherWord(currentWord, wordList, currentIndex);
   }
 
-  processRemainingWords(wordsWithMultipleOrSingleStem);
 
   return analyzedWords;
 };
