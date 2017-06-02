@@ -12,7 +12,8 @@ var ROOT_DIRECTORY = path.resolve(__dirname, '../../../../src/'),
 
 // Consts
 var SINGLE_WORD    = 'singleWord',
-    WORD_LIST      = 'wordList';
+    WORD_LIST      = 'wordList',
+    EMPTY_STRING   = '';
 
 // Export all configs
 module.exports = {
@@ -24,7 +25,8 @@ module.exports = {
   },
   consts : {
     'SINGLE_WORD'    : SINGLE_WORD,
-    'WORD_LIST'      : WORD_LIST
+    'WORD_LIST'      : WORD_LIST,
+    'EMPTY_STRING'   : EMPTY_STRING
   },
   content : {
     'exceptionContent' : require(CONTENT_DIR + 'exceptionContent')

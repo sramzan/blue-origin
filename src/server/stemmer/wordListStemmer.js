@@ -55,6 +55,7 @@ module.exports.StemEngine = stemEngine;
 // var wordList = ['forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter'];
 // var wordList = ['preface','face','walk','walking','bear', 'fetch','bearable','enlighten', null, undefined, '', ' ', 'forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter', 'forcemeat', 'speedometer'];
 // var wordList = [];
+// var wordList = ['preface','face', 'prefaced', 'walk','walking','fetch','bearable','enlighten', null, undefined, '', ' ', 'forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter', 'forcemeat', 'speedometer', 'force'];
 // stemEngine = new stemEngine(wordList, 'en');
 // results    = stemEngine.stemWordList();
 // console.log(JSON.stringify(results));

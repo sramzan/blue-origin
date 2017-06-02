@@ -23,23 +23,31 @@ router.get('/stemmer', function(req, res, next) {
   console.log('Stemming word(s) now!!');
   var url      = req.query.userInput,
       delim    = req.query.delim,
-      results  = {};
+      results  = {},
+      sendResults = false;
+
   if(delim === null || delim === undefined || delim !== ',' || delim !== ' '){ // REALLY dislike this sort of check. Refactor if time permits
     delim = os.EOL;
   }
   try {
-    // var wordListRequest = request(url, function(error, response, body){
+    var wordListRequest = request(url, function(error, response, body){
       console.log('Word List acquired');
-      var wordList = ['preface','face','walk','walking','fetch','bearable','enlighten', null, undefined, '', ' ', 'forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter', 'forcemeat', 'speedometer', 'force']; // body.split(delim),
-          stemEngine = new stemUtil.StemEngine(wordList, 'en');
+      // var wordList = body.split(delim);
+      var wordList = ['preface','face', 'prefaced', 'walk','walking','fetch','bearable','enlighten', null, undefined, '', ' ', 'forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter', 'forcemeat', 'speedometer', 'force'];
+      console.log('Word List Provided: ' + wordList);
+      var stemEngine = new stemUtil.StemEngine(wordList, 'en');
       results = stemEngine.stemWordList();
-    // });
+      res.json(results); // Sort of hacky to be doing this TODO: refactor
+    });
   } catch (e) {
     console.log('ERROR: ' + e);
     console.log(errContent.static.badStemmerCall);
     results.errMessage = errContent.static.badStemmerCall;
+    sendResults = true;
   } finally{
-    res.json(results);
+    if (sendResults){
+      res.json(results);
+    }
   }
 
   // Test data

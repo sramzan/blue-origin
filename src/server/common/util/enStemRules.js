@@ -7,7 +7,7 @@ var path              = require('path'),
     analyzedWords     = {}, // word : {word: word, stems : [], affixes : {affix : []}}
     stemDict          = {},
     wordMetaData      = {},
-    EMPTY_STRING      = '';
+    EMPTY_STRING      = globalConfigs.EMPTY_STRING;
 
 // File Level Utility Methods
 function addWordToStemDict(key, val){
@@ -20,11 +20,16 @@ function init(){ // Ensures objs are reset each time these rules are used
   wordMetaData      = {};
 }
 
-function transferComplexWordsMapping(word){
-  stemDict[word].forEach(function(complexWord){
-    stemDict[wordBeingAnalyzed].push(complexWord);
+function transferComplexWordsMapping(stem, oldStem){
+  stemDict[oldStem].forEach(function(complexWord){
+    stemDict[stem].push(complexWord);
+    if (wordMetaData.hasOwnProperty(complexWord)){
+      // reset meta data since the supposed stem has now changed
+      --wordMetaData[complexWord].numOfStems;
+      wordMetaData[complexWord].stems.splice(wordMetaData[complexWord].stems.indexOf(oldStem), 1);
+    }
   });
-  delete stemDict[word];
+  delete stemDict[oldStem];
 }
 
 function storeWordMetaData(wordBeingAnalyzed, currentWord){
@@ -133,10 +138,14 @@ function updateStemDict(wordBeingAnalyzed, wordList){
 
   for(; index < wordList.length; index++){
     currentWord = wordList[index];
-    if (check.isValidInput(currentWord) && currentWord.includes(wordBeingAnalyzed) && currentWord !== wordBeingAnalyzed){ // If the currentWord contains the wordBeingAnalyzed the assume the currentWord is more complex that the wordBeingAnalyzed (aka the currentWord is NOT  a stem)
+    if (check.isValidInput(currentWord)){ // TODO: Refactor into something more elegant
       currentWord = helper.cleanUp(currentWord);
+    }else{
+      continue;
+    }
+    if (currentWord.includes(wordBeingAnalyzed) && currentWord !== wordBeingAnalyzed){ // If the currentWord contains the wordBeingAnalyzed the assume the currentWord is more complex that the wordBeingAnalyzed (aka the currentWord is NOT  a stem)
       if (stemDict.hasOwnProperty(currentWord)){ // Just in case the more complex word had words mapped to it (i.e. preface : [prefaced] and then we find face so the mapping would become face : [preface, prefaced])
-        transferComplexWordsMapping(currentWord);
+        transferComplexWordsMapping(wordBeingAnalyzed, currentWord);
       }
       addWordToStemDict(wordBeingAnalyzed, currentWord);  // Map the wordBeingAnalyzed to the currentWord (more complex than the wordBeingAnalyzed)
       storeWordMetaData(wordBeingAnalyzed, currentWord); // Store some meta data about the currentWord (how many times it has been seen, and a list of stems found in the word)
@@ -196,10 +205,12 @@ module.exports.decomposeAndStem = function(wordList){
         analyzedWords[currentWord] = generateAnalyzedWordObj(currentWord, circumfixCheck.stems, circumfixCheck.affixes);
         continue;
       }
-      updateStemDict(currentWord, wordList);
+      if (!wordMetaData.hasOwnProperty(currentWord)){ // Regression test
+          updateStemDict(currentWord, wordList);
+      }
     }else{
-      // remove word from list
-      wordList.splice(wordList.indexOf(currentWord), 1);
+      // // remove word from list
+      // wordList.splice(wordList.indexOf(currentWord), 1);
       var errorContentParams = {
             expectedType : 'String', //TODO: Move this error throwing logic to new module
             name         : 'currentWord',
@@ -211,7 +222,8 @@ module.exports.decomposeAndStem = function(wordList){
       // throw input error
     }
   }
-
   analyzeStemDictAndGenerateResults();
+  console.log('Finished analyzing words!');
+  console.log(analyzedWords);
   return analyzedWords;
 };
