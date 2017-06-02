@@ -43,7 +43,7 @@
         }
       };
       $scope.validateURLInput = function(input, delim){
-        if(!errValidator.containsInvalidInput(input, 'urlFormatPattern') || (typeof input !== 'string')){ // TODO - Need custom regex, but adding regex found online with source credit
+        if(errValidator.containsInvalidInput(input, '(badUrl)')){ // TODO - Need custom regex, but adding regex found online with source credit
           showErrorMessage($scope, errMessages.INVALID_URL_INPUT);
         }else{
           $scope.hasSearchedForWords = true;

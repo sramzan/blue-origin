@@ -56,6 +56,9 @@ module.exports.StemEngine = stemEngine;
 
 // Test Code
 // wordList   = ['apple', 'data', 'blastvark', 'banana', 'aardvark', 'aardwolf', 'aaron', 'enlighten', 'hey-there', 'oh-no-ye', 'seanp', 'zoomanh', 'szoop', '', null, undefined],
+// wordList   = ['preface','face','walk','walking','fetch','bearable','enlighten', null, undefined, '', ' ', 'forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter', 'forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter'];
+// wordList = ['forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter'];
+// var wordList   = ['preface','face','walk','walking','fetch','bearable','enlighten', null, undefined, '', ' ', 'forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter', 'forcemeat', 'speedometer'];
 // stemEngine = new stemEngine(wordList, 'en');
 // results    = stemEngine.stemWordList();
 // console.log(JSON.stringify(results));

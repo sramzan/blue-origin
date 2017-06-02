@@ -14,8 +14,8 @@
     <tbody ng-if="wordExists">
       <tr ng-repeat="wordObj in resultsToDisplay">
         <td>{{wordObj.word}}</td>
-        <td colspan="wordObj.stems.length" ng-repeat="stem in wordObj.stems">
-          {{stem}}
+        <td colspan="wordObj.stems.length">
+          {{wordObj.stems}}
         </td>
         <td colspan="wordObj.affixes.prefix.length" ng-repeat="prefix in wordObj.affixes.prefix" ng-if="wordObj.affixes.prefix.length > 0">
           Prefix: {{prefix}}
@@ -25,6 +25,9 @@
         </td>
         <td colspan="wordObj.affixes.circumfix.length" ng-repeat="circumfix in wordObj.affixes.circumfix" ng-if="wordObj.affixes.circumfix.length > 0">
           Circumfix:{{circumfix}}
+        </td>
+        <td colspan="wordObj.affixes.infix.length" ng-repeat="infix in wordObj.affixes.infix" ng-if="wordObj.affixes.infix.length > 0">
+          Infix:{{infix}}
         </td>
       </tr>
     </tbody>

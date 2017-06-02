@@ -1,16 +1,16 @@
 var path              = require('path'),
     globalConfigs     = require(path.resolve(__dirname, '../configs/globalConfigs')),
     exceptionMessages = globalConfigs.content.exceptionContent,
-    regexDict        = globalConfigs.dict.regexDict,
+    regexDict         = globalConfigs.dict.regexDict,
     commonUtil        = new globalConfigs.modules.validations.Validations(),
-    prefixDict        = {},
-    suffixDict        = {},
-    stemDict          = {},
     analyzedWords     = {}, // word : {word: word, stems : [], affixes : []}
+    wordWeb           = {},
+    wordMetaData      = {},
     INFIX             = 'infix',
-    SUFFIXES          = 'suffixes',
+    SUFFIXES          = 'suffix',
     PREFIX            = 'prefix',
-    CIRCUMFIX         = 'circumfix';
+    CIRCUMFIX         = 'circumfix',
+    EMPTY_STRING      = '';
 
 function setResultsObjToMatched(results, stems, affixes, affixType){ // TODO: Refactor logic to call this, and reduce some of the redudant logic below
   results.matched            = true;
@@ -49,7 +49,7 @@ function circumfixAffixPatternCheck(word){ // TODO: Align results obj to the uni
     if(commonUtil.areEqual(frontExpression, commonUtil.reverseString(backExpression))){
         if ((frontIndex < backIndex) && ((frontIndex + 1) !== backIndex)){
         results.matched = true;
-        results.affixes = {CIRCUMFIX : [word.substring(0, frontIndex+1)]}; // TODO: Make circumfix a global config
+        results.affixes = {'circumfix' : [word.substring(0, frontIndex+1)]}; // TODO: Make circumfix a global config
         results.stems   = [word.substring(frontIndex+1, backIndex)];
       }
     }
@@ -150,13 +150,13 @@ function processRemainingWords(remainingWordList){
 }
 
 function generateAnalyzedWordObj(word, stems, affixes){
-  var typesOfAffixes = ['prefix', 'suffixes', 'circumfix', 'infix'],
+  var typesOfAffixes = ['prefix', 'suffix', 'circumfix', 'infix'],
       analyzedWordObj = {
     'word'    : word,
     'stems'   : stems,
     'affixes' : {
       'prefix'    : [],
-      'suffixes'  : [],
+      'suffix'    : [],
       'circumfix' : [],
       'infix'     : []
     }
@@ -177,100 +177,141 @@ function checkForValidInputAndReverse(str){
   }
 }
 
+function buildStemDictionary(wordBeingSearch, wordList){
+  var index       = 0,
+      currentWord = '',
+      matchFound  = false;
+
+  if (!wordWeb.hasOwnProperty(wordBeingSearch) && !wordMetaData.hasOwnProperty(wordBeingSearch)){
+    wordWeb[wordBeingSearch] = [];
+  }
+
+  for(; index < wordList.length; index++){
+    currentWord = wordList[index];
+    if (commonUtil.isValidInput(currentWord) && currentWord.includes(wordBeingSearch) && currentWord !== wordBeingSearch){
+      currentWord = commonUtil.cleanUp(currentWord);
+      if (wordWeb.hasOwnProperty(currentWord)){
+        wordWeb[currentWord].forEach(function(complexWord){
+          wordWeb[wordBeingSearch].push(complexWord);
+        });
+        delete wordWeb[currentWord];
+    }
+      wordWeb[wordBeingSearch].push(currentWord);
+      wordMetaData[currentWord] = wordMetaData[currentWord] || {};
+      wordMetaData[currentWord].numOfStems = ++wordMetaData[currentWord].numOfStems || 1; // Either it's the first time the word has matched something, or it has matched words before
+      if (wordMetaData[currentWord].numOfStems > 1){
+        wordMetaData[currentWord].stems.push(wordBeingSearch); // to get here, the word had to have contained one or more stems
+      }else{
+        wordMetaData[currentWord].stems = [wordBeingSearch];
+      }
+      matchFound = true;
+    }
+  }
+  return matchFound;
+}
+
+function stemEachComplexWord(stem, listOfComplexWords){
+  var index = 0,
+      currentWord = '',
+      infix       = '',
+      prefix      = '',
+      suffix      = '',
+      hasPrefix   = false,
+      hasSuffx    = false;
+
+  // if (listOfComplexWords.length === 0){ // Stem is not contained in any of the words
+  analyzedWords[stem] = generateAnalyzedWordObj(stem, [stem], {});
+  // }
+
+  if (listOfComplexWords.length === 0){
+    return;
+  }
+
+  for(; index < listOfComplexWords.length; index++){
+    prefix = '';
+    suffix = '';
+    hasPrefix = false;
+    hasSuffx  = false;
+    currentWord = listOfComplexWords[index];
+
+    if(analyzedWords.hasOwnProperty(currentWord)){
+      continue; // It has already been seen & stemmed in another interation
+    }
+
+    // Check for multiple stems
+    if (wordMetaData[currentWord].numOfStems > 1){
+      wordMetaData[currentWord].stems.forEach(function(stem){
+        if (currentWord.includes(stem)){
+          currentWord = currentWord.replace(stem, '');
+        }
+      });
+      var infixObj = (currentWord.trim().length > 0) ? {'infix' : [currentWord]} : {};
+      analyzedWords[listOfComplexWords[index]] = generateAnalyzedWordObj(listOfComplexWords[index], wordMetaData[listOfComplexWords[index]].stems, infixObj); // TODO - clean this up
+    }else {
+      var prefixSuffixObj = {};
+      // Check for prefix
+      if (currentWord.includes(stem) && currentWord.indexOf(stem) > 0){
+        hasPrefix = true;
+        prefix = currentWord.substring(0, currentWord.indexOf(stem));
+        prefixSuffixObj.prefix = [prefix];
+      }
+
+      // Check for suffix
+      var charPosAfterEndOfStem = currentWord.indexOf(stem) + stem.length;
+      if(currentWord.includes(stem) && currentWord.charAt(charPosAfterEndOfStem) !== EMPTY_STRING){
+        hasSuffx = true;
+        suffix   = currentWord.substring(charPosAfterEndOfStem, currentWord.length);
+        prefixSuffixObj.suffix = [suffix];
+      }
+
+      if (hasPrefix || hasSuffx){
+        analyzedWords[currentWord] = generateAnalyzedWordObj(currentWord, stem, prefixSuffixObj);
+      }
+    }
+  }
+}
+
+function checkAndDeleteDuplicates(wordList){
+  wordList = wordList.filter(function(word, index, arr){
+    return index === arr.indexOf(word);
+  });
+  return wordList;
+}
+
 module.exports.decomposeAndStem = function(wordList){
   var currentIndex = 0,
       backIndex    = 0,
       listLength   = wordList.length,
-      word1        = '',
+      currentWord  = '',
       word2        = '',
       hasPrefix    = false,
       wordsWithMultipleOrSingleStem = [];
 
-  wordList = wordList.sort();
-  var reversedWordList = wordList.map(checkForValidInputAndReverse);
-      reversedWordList = reversedWordList.sort();
-
-  for (; currentIndex < listLength; currentIndex++){
-    hasPrefix = false;
-    hasSuffix = false;
-    word1 = wordList[currentIndex];
-    word2 = (currentIndex + 1) < listLength ? wordList[currentIndex+1] : ""; // Check for when word1 is the last word in the array
-    if (commonUtil.isValidInput(word1) && !word1.match(regexDict.lookup('multipleDashes'))){
-      if (word1.length < 3){
-        analyzedWords[word1] = generateAnalyzedWordObj(word1, [word1], {});
-      }
-      word1 = commonUtil.cleanUp(word1);
-      word2 = commonUtil.isValidInput(word2) ? commonUtil.cleanUp(word2) : "";
-
-      // Do not analye duplicate word
-      if (analyzedWords.hasOwnProperty(word1)){
+  wordList = checkAndDeleteDuplicates(wordList);
+  for(; currentIndex < wordList.length; currentIndex++){
+    currentWord = wordList[currentIndex];
+    if (commonUtil.isValidInput(currentWord)){
+      currentWord = commonUtil.cleanUp(currentWord);
+      var circumfixCheck = circumfixAffixPatternCheck(currentWord);
+      if (circumfixCheck.matched){
+        analyzedWords[currentWord] = generateAnalyzedWordObj(currentWord, circumfixCheck.stems, circumfixCheck.affixes);
         continue;
       }
-
-      var infixPattern = infixPatternCheck(word1);
-      if (infixPattern.matched){
-        analyzedWords[word1] = generateAnalyzedWordObj(word1, infixPattern.stems, infixPattern.affixes);
-        for (var index = 0; index < infixPattern.stems.length; index++){
-          stemDict[infixPattern.stems[index]] = true; // Add all found stems to the lookup dict
-        }
-        continue;
-      }
-
-      // Check for circumfix pattern
-      var circumfixPattern = circumfixAffixPatternCheck(word1);
-      if (circumfixPattern.matched){
-        analyzedWords[word1] = generateAnalyzedWordObj(word1, circumfixPattern.stems, circumfixPattern.affixes);
-        stemDict[circumfixPattern.stems[0]] = true;
-        continue;
-      }
-
-      // Prefix check
-      var prefixCheckResults = prefixPatternCheck(word1, word2);
-      if (prefixCheckResults.matched){
-        hasPrefix = true;
-      }
-
-      // Suffix Check
-      var suffixCheckResults = suffixPatternCheck(word1, word2, reversedWordList);
-      if (suffixCheckResults.matched){
-        hasSuffix = true;
-      }
-
-      // Get stems based on prefix & suffix check
-      var stem = word1;
-      if (hasPrefix){
-        stem = stem.replace(prefixCheckResults.prefix[0], '');
-        // stem = stem.substring(stem.length - prefixCheckResults.prefix.length);
-      }
-
-      if (hasSuffix){
-        // stem = word1.replace(currentSuffix.suffix[0], '');
-        stem = stem.substring(0, (stem.length - suffixCheckResults.suffixes[0].length));
-      }
-
-      // No Prefix, Suffix, or Circumfix found, so store the stem & the word
-      if (commonUtil.areEqual(stem, word1)){
-        wordsWithMultipleOrSingleStem.push(word1);
-      }else{
-        stemDict[stem] = true;
-      }
-
-        analyzedWords[word1] = generateAnalyzedWordObj(word1, [stem], {'suffixes' : suffixCheckResults.suffixes,
-                                                                       'prefix'   : prefixCheckResults.prefix});
+      buildStemDictionary(currentWord, wordList);
     }else{
-      var errorContentParams = {
-            expectedType : 'String', //TODO: Move this error throwing logic to new module
-            name         : 'word1',
-            type         : typeof word1,
-            value        : word1
-      };
-      console.log(exceptionMessages.static.invalidWord + '\n' + // TODO: Change to throw when done testing
-                  exceptionMessages.dynamic.notExpectedType(errorContentParams));
+      // remove word from list
+      wordList.splice(wordList.indexOf(currentWord), 1);
+      // throw input error
     }
   }
 
-  processRemainingWords(wordsWithMultipleOrSingleStem);
+  for(stem in wordWeb){
+    if (wordWeb.hasOwnProperty(stem)){
+      stemEachComplexWord(stem, wordWeb[stem]);
+    }
+  }
 
+  console.log(analyzedWords);
   return analyzedWords;
 };
 
