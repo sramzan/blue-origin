@@ -4,7 +4,7 @@
 
     app.controller('mainCtrl', ['$scope', '$http', '$state', '$rootScope', function($scope, $http, $state, $rootScope) {
       // Local Methods
-      function showErrorMessage($scope, errMess){ // TODO - move to validator engine
+      function showErrorMessage(errMess){ // TODO - move to validator engine
         $scope.invalid   = true; //display error
         $scope.errorText = errMess;
       }
@@ -21,7 +21,11 @@
 
         $http.get('stemmer', data).then(function(response){
             console.log("Stem Success!");
-            response.config.params.context.changeState('stemResults', response.data);
+            if (response.data.errMessage){
+              showErrorMessage(response.data.errMessage);
+            }else{
+              response.config.params.context.changeState('stemResults', response.data);
+            }
           }, function(error){
         });
       }
