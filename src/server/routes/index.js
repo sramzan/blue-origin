@@ -29,7 +29,8 @@ router.get('/stemmer', function(req, res, next) {
   }
   // var wordListRequest = request(url, function(error, response, body){
         console.log('Word List acquired');
-        var wordList   = ['face', 'preface', 'lift', 'facelift', 'facing', 'lifting'], //body.split(delim),
+        // var wordList   = ['face', 'preface', 'lift', 'facelift', 'facing', 'lifting'], //body.split(delim),
+        var wordList   = ['preface','face','walk','walking','fetch','bearable','enlighten', null, undefined, '', ' ', 'forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter', 'forcemeat', 'speedometer', 'force','speed','meter'];
             stemEngine = new stemUtil.StemEngine(wordList, 'en'),
             results    = stemEngine.stemWordList();
         res.json(results);

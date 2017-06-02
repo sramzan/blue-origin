@@ -1,19 +1,16 @@
 var path              = require('path'),
     globalConfigs     = require(path.resolve(__dirname, '../configs/globalConfigs')),
     exceptionMessages = globalConfigs.content.exceptionContent,
-    regexDict        = globalConfigs.dict.regexDict,
+    regexDict         = globalConfigs.dict.regexDict,
     commonUtil        = new globalConfigs.modules.validations.Validations(),
-    prefixDict        = {},
-    suffixDict        = {},
-    stemDict          = {},
     analyzedWords     = {}, // word : {word: word, stems : [], affixes : []}
-    exploredWords     = {},
     wordWeb           = {},
-    wordCount         = {},
+    wordMetaData      = {},
     INFIX             = 'infix',
-    SUFFIXES          = 'suffixes',
+    SUFFIXES          = 'suffix',
     PREFIX            = 'prefix',
-    CIRCUMFIX         = 'circumfix';
+    CIRCUMFIX         = 'circumfix',
+    EMPTY_STRING      = '';
 
 function setResultsObjToMatched(results, stems, affixes, affixType){ // TODO: Refactor logic to call this, and reduce some of the redudant logic below
   results.matched            = true;
@@ -52,7 +49,7 @@ function circumfixAffixPatternCheck(word){ // TODO: Align results obj to the uni
     if(commonUtil.areEqual(frontExpression, commonUtil.reverseString(backExpression))){
         if ((frontIndex < backIndex) && ((frontIndex + 1) !== backIndex)){
         results.matched = true;
-        results.affixes = {CIRCUMFIX : [word.substring(0, frontIndex+1)]}; // TODO: Make circumfix a global config
+        results.affixes = {'circumfix' : [word.substring(0, frontIndex+1)]}; // TODO: Make circumfix a global config
         results.stems   = [word.substring(frontIndex+1, backIndex)];
       }
     }
@@ -153,13 +150,13 @@ function processRemainingWords(remainingWordList){
 }
 
 function generateAnalyzedWordObj(word, stems, affixes){
-  var typesOfAffixes = ['prefix', 'suffixes', 'circumfix', 'infix'],
+  var typesOfAffixes = ['prefix', 'suffix', 'circumfix', 'infix'],
       analyzedWordObj = {
     'word'    : word,
     'stems'   : stems,
     'affixes' : {
       'prefix'    : [],
-      'suffixes'  : [],
+      'suffix'    : [],
       'circumfix' : [],
       'infix'     : []
     }
@@ -180,18 +177,19 @@ function checkForValidInputAndReverse(str){
   }
 }
 
-function checkIfWordIsPartOfAnotherWord(wordBeingSearch, wordList, start){
+function buildStemDictionary(wordBeingSearch, wordList){
   var index       = 0,
       currentWord = '',
       matchFound  = false;
 
-  if (!wordWeb.hasOwnProperty(wordBeingSearch)){
+  if (!wordWeb.hasOwnProperty(wordBeingSearch) && !wordMetaData.hasOwnProperty(wordBeingSearch)){
     wordWeb[wordBeingSearch] = [];
   }
 
   for(; index < wordList.length; index++){
     currentWord = wordList[index];
-    if (currentWord.includes(wordBeingSearch) && currentWord !== wordBeingSearch){
+    if (commonUtil.isValidInput(currentWord) && currentWord.includes(wordBeingSearch) && currentWord !== wordBeingSearch){
+      currentWord = commonUtil.cleanUp(currentWord);
       if (wordWeb.hasOwnProperty(currentWord)){
         wordWeb[currentWord].forEach(function(complexWord){
           wordWeb[wordBeingSearch].push(complexWord);
@@ -199,12 +197,85 @@ function checkIfWordIsPartOfAnotherWord(wordBeingSearch, wordList, start){
         delete wordWeb[currentWord];
     }
       wordWeb[wordBeingSearch].push(currentWord);
-      wordCount[currentWord] = ++wordCount[currentWord] || 1; // Either it's the first time the word has matched something, or it has matched words before
-      // TODO - Might want to store metadata associated with repeat seen word here
+      wordMetaData[currentWord] = wordMetaData[currentWord] || {};
+      wordMetaData[currentWord].numOfStems = ++wordMetaData[currentWord].numOfStems || 1; // Either it's the first time the word has matched something, or it has matched words before
+      if (wordMetaData[currentWord].numOfStems > 1){
+        wordMetaData[currentWord].stems.push(wordBeingSearch); // to get here, the word had to have contained one or more stems
+      }else{
+        wordMetaData[currentWord].stems = [wordBeingSearch];
+      }
       matchFound = true;
     }
   }
   return matchFound;
+}
+
+function stemEachComplexWord(stem, listOfComplexWords){
+  var index = 0,
+      currentWord = '',
+      infix       = '',
+      prefix      = '',
+      suffix      = '',
+      hasPrefix   = false,
+      hasSuffx    = false;
+
+  // if (listOfComplexWords.length === 0){ // Stem is not contained in any of the words
+  analyzedWords[stem] = generateAnalyzedWordObj(stem, [stem], {});
+  // }
+
+  if (listOfComplexWords.length === 0){
+    return;
+  }
+
+  for(; index < listOfComplexWords.length; index++){
+    prefix = '';
+    suffix = '';
+    hasPrefix = false;
+    hasSuffx  = false;
+    currentWord = listOfComplexWords[index];
+
+    if(analyzedWords.hasOwnProperty(currentWord)){
+      continue; // It has already been seen & stemmed in another interation
+    }
+
+    // Check for multiple stems
+    if (wordMetaData[currentWord].numOfStems > 1){
+      wordMetaData[currentWord].stems.forEach(function(stem){
+        if (currentWord.includes(stem)){
+          currentWord = currentWord.replace(stem, '');
+        }
+      });
+      var infixObj = (currentWord.trim().length > 0) ? {'infix' : [currentWord]} : {};
+      analyzedWords[listOfComplexWords[index]] = generateAnalyzedWordObj(listOfComplexWords[index], wordMetaData[listOfComplexWords[index]].stems, infixObj); // TODO - clean this up
+    }else {
+      var prefixSuffixObj = {};
+      // Check for prefix
+      if (currentWord.includes(stem) && currentWord.indexOf(stem) > 0){
+        hasPrefix = true;
+        prefix = currentWord.substring(0, currentWord.indexOf(stem));
+        prefixSuffixObj.prefix = [prefix];
+      }
+
+      // Check for suffix
+      var charPosAfterEndOfStem = currentWord.indexOf(stem) + stem.length;
+      if(currentWord.includes(stem) && currentWord.charAt(charPosAfterEndOfStem) !== EMPTY_STRING){
+        hasSuffx = true;
+        suffix   = currentWord.substring(charPosAfterEndOfStem, currentWord.length);
+        prefixSuffixObj.suffix = [suffix];
+      }
+
+      if (hasPrefix || hasSuffx){
+        analyzedWords[currentWord] = generateAnalyzedWordObj(currentWord, stem, prefixSuffixObj);
+      }
+    }
+  }
+}
+
+function checkAndDeleteDuplicates(wordList){
+  wordList = wordList.filter(function(word, index, arr){
+    return index === arr.indexOf(word);
+  });
+  return wordList;
 }
 
 module.exports.decomposeAndStem = function(wordList){
@@ -216,12 +287,31 @@ module.exports.decomposeAndStem = function(wordList){
       hasPrefix    = false,
       wordsWithMultipleOrSingleStem = [];
 
-  for(; currentIndex < listLength; currentIndex++){
+  wordList = checkAndDeleteDuplicates(wordList);
+  for(; currentIndex < wordList.length; currentIndex++){
     currentWord = wordList[currentIndex];
-    checkIfWordIsPartOfAnotherWord(currentWord, wordList, currentIndex);
+    if (commonUtil.isValidInput(currentWord)){
+      currentWord = commonUtil.cleanUp(currentWord);
+      var circumfixCheck = circumfixAffixPatternCheck(currentWord);
+      if (circumfixCheck.matched){
+        analyzedWords[currentWord] = generateAnalyzedWordObj(currentWord, circumfixCheck.stems, circumfixCheck.affixes);
+        continue;
+      }
+      buildStemDictionary(currentWord, wordList);
+    }else{
+      // remove word from list
+      wordList.splice(wordList.indexOf(currentWord), 1);
+      // throw input error
+    }
   }
 
+  for(stem in wordWeb){
+    if (wordWeb.hasOwnProperty(stem)){
+      stemEachComplexWord(stem, wordWeb[stem]);
+    }
+  }
 
+  console.log(analyzedWords);
   return analyzedWords;
 };
 
