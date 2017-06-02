@@ -3,9 +3,8 @@ var express     = require('express'),
     request     = require('request'),
     os          = require("os"),
     configs     = require(path.resolve(__dirname, '../common/configs/globalConfigs')),
-    utils       = require(path.resolve(__dirname, '../common/util/utils')),
-    router      = express.Router(),
-    stemUtil    = utils.stemmer;
+    stemUtil    = require(path.resolve(__dirname, '../stemmer/wordListStemmer')),
+    router      = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
