@@ -2,8 +2,10 @@
 var path          = require('path'),
     globalConfigs = require(path.resolve(__dirname, '../configs/globalConfigs'));
 
-var STEMMER_DIR = globalConfigs.paths.STEMMER_DIR;
+var STEMMER_DIR = globalConfigs.paths.STEMMER_DIR,
+    UTIL_DIR    = globalConfigs.paths.UTIL_DIR;
 
 module.exports = {
-  stemmer : require(STEMMER_DIR + 'wordListStemmer')
+  validator : require(UTIL_DIR + 'validations'),
+  helpers   : require(UTIL_DIR + 'helpers'),
 };

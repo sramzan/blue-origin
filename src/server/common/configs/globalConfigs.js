@@ -29,9 +29,6 @@ module.exports = {
   content : {
     'exceptionContent' : require(CONTENT_DIR + 'exceptionContent')
   },
-  modules : {
-    'validations' : require(UTIL_DIR + 'validations'),
-  },
   dict    : {
     'regexDict'   : require(LIB_DIR + 'regexDict')
   }
