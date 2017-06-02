@@ -1,8 +1,9 @@
 module.exports = {
   static : {
-    'invalidWordListInput' : 'Bad word list input passed to be stemmed!',
+    'invalidWordListInput' : 'Bad word list input passed to be stemmed! No list passed or list is empty.',
     'invalidWord'          : 'Bad word in list!',
-    'invalidLanguage'      : 'Bad language passed to Stem Engine!'
+    'invalidLanguage'      : 'Bad language passed to Stem Engine!',
+    'badStemmerCall'       : 'Bad call to stemmer! Words not stemmed'
   },
   dynamic : {
     'notExpectedType' : function(input){

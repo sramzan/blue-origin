@@ -8,7 +8,7 @@ var path              = require('path'),
     exceptionMessages = globalConfigs.content.exceptionContent;
 
 var stemEngine = function StemEngine(wordList, language){
-  if(!Array.isArray(wordList)){
+  if(!Array.isArray(wordList) || wordList.length === 0){
     throwConstructorError(wordList, 'wordList', 'Array', 'invalidWordListInput');
   }
 
@@ -54,6 +54,7 @@ module.exports.StemEngine = stemEngine;
 // var wordList = ['preface','face','walk','walking','fetch','bearable','enlighten', null, undefined, '', ' ', 'forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter', 'forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter'];
 // var wordList = ['forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter'];
 // var wordList = ['preface','face','walk','walking','bear', 'fetch','bearable','enlighten', null, undefined, '', ' ', 'forcemeat', 'speedometer', 'force', 'meat', 'speed', 'meter', 'forcemeat', 'speedometer'];
+// var wordList = [];
 // stemEngine = new stemEngine(wordList, 'en');
 // results    = stemEngine.stemWordList();
 // console.log(JSON.stringify(results));
